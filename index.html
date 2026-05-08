@@ -1,443 +1,892 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Vidhia — Sikh Digital Library</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet"/>
   <style>
+    /* ── DESIGN TOKENS ── */
     :root {
-      --saffron: #E8840A;
-      --saffron-light: #F5A623;
-      --saffron-dark: #C0690A;
-      --navy: #1A2557;
-      --navy-light: #253071;
-      --navy-dark: #0F1735;
-      --gold: #D4A017;
-      --gold-light: #F0C040;
-      --cream: #FFFBF5;
-      --cream-dark: #FFF3E0;
-      --white: #FFFFFF;
-      --gray-50: #F9FAFB;
-      --gray-100: #F3F4F6;
-      --gray-200: #E5E7EB;
-      --gray-300: #D1D5DB;
-      --gray-400: #9CA3AF;
-      --gray-500: #6B7280;
-      --gray-600: #4B5563;
-      --gray-700: #374151;
-      --gray-800: #1F2937;
+      --bg:        #07080D;
+      --bg-2:      #0D0F18;
+      --bg-3:      #111420;
+      --surface:   #131621;
+      --surface-2: #181C2E;
+      --border:    rgba(255,255,255,0.06);
+      --border-2:  rgba(255,255,255,0.10);
+      --gold:      #F0A500;
+      --gold-2:    #FFB830;
+      --gold-dim:  rgba(240,165,0,0.15);
+      --gold-glow: rgba(240,165,0,0.25);
+      --text-1:    #F0F2FF;
+      --text-2:    rgba(240,242,255,0.55);
+      --text-3:    rgba(240,242,255,0.30);
       --radius-sm: 8px;
-      --radius: 12px;
+      --radius:    14px;
       --radius-lg: 20px;
       --radius-xl: 28px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-      --shadow: 0 4px 16px rgba(0,0,0,0.08);
-      --shadow-md: 0 8px 32px rgba(0,0,0,0.10);
-      --shadow-lg: 0 20px 60px rgba(0,0,0,0.14);
-      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+      --ease:      cubic-bezier(0.4,0,0.2,1);
+      --shadow-gold: 0 0 40px rgba(240,165,0,0.15);
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+
+    /* ── RESET ── */
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; font-size:16px; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--cream);
-      color: var(--gray-800);
-      line-height: 1.6;
-      overflow-x: hidden;
+      font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+      background:var(--bg);
+      color:var(--text-1);
+      line-height:1.6;
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
     }
+
+    /* Noise texture overlay */
+    body::before {
+      content:'';
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity:0.4;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:rgba(240,165,0,0.3); border-radius:99px; }
 
     /* ── NAVBAR ── */
     .navbar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      background: rgba(255,251,245,0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(232,132,10,0.12);
-      transition: var(--transition);
+      position:fixed; top:0; left:0; right:0; z-index:1000;
+      padding:0 24px;
+      border-bottom:1px solid var(--border);
+      background:rgba(7,8,13,0.8);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      transition:all 0.3s var(--ease);
     }
-    .navbar.scrolled { background: rgba(255,251,245,0.97); box-shadow: 0 2px 20px rgba(0,0,0,0.07); }
+    .navbar.scrolled {
+      background:rgba(7,8,13,0.95);
+      border-bottom-color:var(--border-2);
+    }
     .nav-inner {
-      max-width: 1280px; margin: 0 auto; padding: 0 24px;
-      height: 68px; display: flex; align-items: center; gap: 24px;
+      max-width:1280px; margin:0 auto; height:66px;
+      display:flex; align-items:center; gap:24px;
     }
-    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
-    .nav-logo-icon {
-      width: 38px; height: 38px;
-      background: linear-gradient(135deg, var(--saffron), var(--saffron-light));
-      border-radius: 10px; display: flex; align-items: center; justify-content: center;
-      font-size: 20px; box-shadow: 0 2px 10px rgba(232,132,10,0.35);
+    .nav-logo {
+      display:flex; align-items:center; gap:10px;
+      text-decoration:none; flex-shrink:0;
     }
-    .nav-logo-text { font-size: 1.25rem; font-weight: 700; color: var(--navy); letter-spacing: -0.02em; }
-    .nav-logo-text span { color: var(--saffron); }
-    .nav-search { flex: 1; max-width: 500px; position: relative; }
+    .nav-logo-mark {
+      width:36px; height:36px; border-radius:10px;
+      background:linear-gradient(135deg,var(--gold),var(--gold-2));
+      display:flex; align-items:center; justify-content:center;
+      font-size:18px;
+      box-shadow:0 0 20px rgba(240,165,0,0.4);
+    }
+    .nav-logo-name {
+      font-size:1.15rem; font-weight:700; color:var(--text-1);
+      letter-spacing:-0.02em;
+    }
+    .nav-logo-name span { color:var(--gold); }
+
+    .nav-search {
+      flex:1; max-width:440px; position:relative;
+    }
     .nav-search input {
-      width: 100%; padding: 10px 16px 10px 42px;
-      border: 1.5px solid var(--gray-200); border-radius: 50px;
-      font-size: 0.9rem; font-family: inherit; background: var(--white);
-      color: var(--gray-800); outline: none; transition: var(--transition);
+      width:100%;
+      padding:9px 16px 9px 40px;
+      background:var(--surface);
+      border:1px solid var(--border-2);
+      border-radius:10px;
+      color:var(--text-1);
+      font-size:0.875rem;
+      font-family:inherit;
+      outline:none;
+      transition:all 0.2s var(--ease);
     }
-    .nav-search input:focus { border-color: var(--saffron); box-shadow: 0 0 0 3px rgba(232,132,10,0.12); }
-    .nav-search input::placeholder { color: var(--gray-400); }
-    .nav-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gray-400); pointer-events: none; }
-    .nav-links { display: flex; align-items: center; gap: 4px; margin-left: auto; }
-    .nav-link { padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 0.88rem; font-weight: 500; color: var(--gray-600); transition: var(--transition); }
-    .nav-link:hover { color: var(--saffron); background: rgba(232,132,10,0.07); }
+    .nav-search input::placeholder { color:var(--text-3); }
+    .nav-search input:focus {
+      border-color:rgba(240,165,0,0.4);
+      background:var(--surface-2);
+      box-shadow:0 0 0 3px rgba(240,165,0,0.08);
+    }
+    .nav-search-ico {
+      position:absolute; left:12px; top:50%;
+      transform:translateY(-50%);
+      color:var(--text-3); pointer-events:none;
+    }
+    .nav-links {
+      display:flex; align-items:center; gap:2px; margin-left:auto;
+    }
+    .nav-link {
+      padding:7px 14px; border-radius:8px;
+      text-decoration:none; font-size:0.875rem; font-weight:500;
+      color:var(--text-2); transition:all 0.2s var(--ease);
+    }
+    .nav-link:hover { color:var(--text-1); background:rgba(255,255,255,0.05); }
     .nav-cta {
-      padding: 9px 20px;
-      background: linear-gradient(135deg, var(--saffron), var(--saffron-light));
-      color: var(--white); border-radius: 50px; font-weight: 600; font-size: 0.88rem;
-      text-decoration: none; box-shadow: 0 2px 10px rgba(232,132,10,0.35); transition: var(--transition);
+      padding:8px 18px;
+      background:var(--gold);
+      color:#000;
+      border-radius:10px;
+      font-weight:700; font-size:0.875rem;
+      text-decoration:none;
+      letter-spacing:-0.01em;
+      transition:all 0.2s var(--ease);
+      box-shadow:0 0 20px rgba(240,165,0,0.3);
     }
-    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(232,132,10,0.45); }
+    .nav-cta:hover {
+      background:var(--gold-2);
+      transform:translateY(-1px);
+      box-shadow:0 0 30px rgba(240,165,0,0.45);
+    }
 
     /* ── SEARCH OVERLAY ── */
     .search-overlay {
-      display: none; position: fixed; inset: 68px 0 0; z-index: 999;
-      background: rgba(15,23,53,0.45); backdrop-filter: blur(8px);
+      display:none; position:fixed;
+      inset:66px 0 0; z-index:999;
+      background:rgba(7,8,13,0.7);
+      backdrop-filter:blur(12px);
     }
-    .search-results-panel {
-      max-width: 640px; margin: 20px auto;
-      background: var(--white); border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg); overflow: hidden; max-height: 72vh; overflow-y: auto;
+    .search-panel {
+      max-width:580px; margin:16px auto;
+      background:var(--surface);
+      border:1px solid var(--border-2);
+      border-radius:var(--radius-lg);
+      overflow:hidden; max-height:75vh; overflow-y:auto;
+      box-shadow:0 24px 64px rgba(0,0,0,0.6);
     }
-    .search-results-header { padding: 14px 20px; border-bottom: 1px solid var(--gray-100); font-size: 0.82rem; color: var(--gray-500); }
-    .search-result-item {
-      display: flex; align-items: center; gap: 14px; padding: 13px 20px;
-      border-bottom: 1px solid var(--gray-50); cursor: pointer; transition: var(--transition);
+    .search-panel-header {
+      padding:12px 18px;
+      border-bottom:1px solid var(--border);
+      font-size:0.78rem; color:var(--text-3);
+      font-weight:500;
     }
-    .search-result-item:hover { background: var(--cream); }
-    .search-result-icon {
-      width: 36px; height: 36px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;
+    .search-item {
+      display:flex; align-items:center; gap:12px;
+      padding:12px 18px;
+      border-bottom:1px solid var(--border);
+      cursor:pointer; transition:background 0.15s;
     }
-    .search-result-name { font-weight: 600; font-size: 0.88rem; color: var(--gray-800); }
-    .search-result-meta { font-size: 0.76rem; color: var(--gray-500); margin-top: 2px; }
+    .search-item:hover { background:var(--surface-2); }
+    .search-item-icon {
+      width:34px; height:34px; border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.95rem; flex-shrink:0;
+      background:var(--bg-3);
+    }
+    .search-item-name { font-weight:600; font-size:0.875rem; color:var(--text-1); }
+    .search-item-meta { font-size:0.75rem; color:var(--text-3); margin-top:2px; }
 
     /* ── HERO ── */
     .hero {
-      min-height: 100vh; background: var(--navy-dark);
-      position: relative; display: flex; flex-direction: column;
-      justify-content: center; overflow: hidden; padding: 100px 24px 80px;
+      position:relative; min-height:100vh;
+      display:flex; flex-direction:column; justify-content:center;
+      padding:120px 24px 80px; overflow:hidden;
     }
-    .hero-bg {
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 60% 40%, rgba(232,132,10,0.18) 0%, transparent 60%),
-        linear-gradient(135deg, #0F1735 0%, #1A2557 50%, #0F1735 100%);
+    /* Aurora background */
+    .hero-aurora {
+      position:absolute; inset:0; z-index:0; overflow:hidden;
     }
+    .aurora-blob {
+      position:absolute; border-radius:50%;
+      filter:blur(120px); opacity:0.6;
+    }
+    .aurora-1 {
+      width:700px; height:700px;
+      background:radial-gradient(circle,rgba(240,165,0,0.2),transparent 70%);
+      right:-150px; top:-200px;
+      animation:drift1 12s ease-in-out infinite;
+    }
+    .aurora-2 {
+      width:500px; height:500px;
+      background:radial-gradient(circle,rgba(120,80,220,0.12),transparent 70%);
+      left:-100px; bottom:-100px;
+      animation:drift2 15s ease-in-out infinite;
+    }
+    .aurora-3 {
+      width:400px; height:400px;
+      background:radial-gradient(circle,rgba(240,165,0,0.08),transparent 70%);
+      left:40%; top:20%;
+      animation:drift3 10s ease-in-out infinite;
+    }
+    @keyframes drift1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-40px,40px) scale(1.08)} }
+    @keyframes drift2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(30px,-30px) scale(1.05)} }
+    @keyframes drift3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-20px,20px)} }
+
+    /* Grid lines */
     .hero-grid {
-      position: absolute; inset: 0;
-      background-image: linear-gradient(rgba(232,132,10,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(232,132,10,0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
+      position:absolute; inset:0; z-index:0;
+      background-image:
+        linear-gradient(rgba(240,165,0,0.03) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(240,165,0,0.03) 1px,transparent 1px);
+      background-size:64px 64px;
+      mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 0%,transparent 100%);
     }
-    .hero-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; animation: float 8s ease-in-out infinite; }
-    .hero-orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(232,132,10,0.3), transparent 70%); right: -100px; top: -100px; }
-    .hero-orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(212,160,23,0.2), transparent 70%); left: 10%; bottom: 10%; animation-delay: -4s; }
-    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
 
     .hero-content {
-      position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%;
-      display: grid; grid-template-columns: 1fr 400px; gap: 80px; align-items: center;
+      position:relative; z-index:1;
+      max-width:1280px; margin:0 auto; width:100%;
+      display:grid; grid-template-columns:1fr 380px;
+      gap:80px; align-items:center;
     }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 10px;
-      background: rgba(232,132,10,0.15); border: 1px solid rgba(232,132,10,0.3);
-      border-radius: 50px; font-size: 0.78rem; font-weight: 600; color: var(--saffron-light);
-      letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 24px;
+
+    .hero-eyebrow {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:5px 12px 5px 8px;
+      background:rgba(240,165,0,0.08);
+      border:1px solid rgba(240,165,0,0.2);
+      border-radius:99px;
+      font-size:0.75rem; font-weight:600;
+      color:var(--gold); letter-spacing:0.04em;
+      text-transform:uppercase; margin-bottom:20px;
     }
-    .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--saffron-light); animation: pulse 2s ease-in-out infinite; }
-    @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(0.8); } }
+    .eyebrow-dot {
+      width:5px; height:5px; border-radius:50%;
+      background:var(--gold);
+      animation:pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
     .hero-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(2.4rem, 4.5vw, 4rem); font-weight: 700;
-      color: var(--white); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 24px;
+      font-family:'Playfair Display',Georgia,serif;
+      font-size:clamp(2.8rem,5vw,4.5rem);
+      font-weight:700; line-height:1.08;
+      letter-spacing:-0.03em;
+      color:var(--text-1);
+      margin-bottom:20px;
     }
-    .hero-title .highlight {
-      background: linear-gradient(135deg, var(--saffron-light), var(--gold-light));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    .hero-title .gold {
+      background:linear-gradient(135deg,var(--gold),var(--gold-2),#FF9500);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
     }
-    .hero-desc { font-size: 1.05rem; color: rgba(255,255,255,0.68); line-height: 1.75; max-width: 520px; margin-bottom: 40px; }
-    .hero-desc em { color: rgba(255,255,255,0.9); font-style: normal; font-weight: 500; }
-    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px;
-      background: linear-gradient(135deg, var(--saffron), var(--saffron-light));
-      color: var(--white); border-radius: 50px; font-weight: 600; font-size: 1rem;
-      text-decoration: none; box-shadow: 0 4px 20px rgba(232,132,10,0.45); transition: var(--transition);
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,132,10,0.55); }
-    .btn-secondary {
-      display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px;
-      background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9);
-      border: 1.5px solid rgba(255,255,255,0.2); border-radius: 50px;
-      font-weight: 600; font-size: 1rem; text-decoration: none;
-      backdrop-filter: blur(10px); transition: var(--transition);
-    }
-    .btn-secondary:hover { background: rgba(255,255,255,0.14); transform: translateY(-2px); }
+    .hero-title .italic { font-style:italic; }
 
-    .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; }
-    .khanda-container { position: relative; width: 320px; height: 320px; }
-    .khanda-ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(232,132,10,0.2); animation: spin-slow 20s linear infinite; }
-    .khanda-ring-2 { inset: 30px; border-color: rgba(212,160,23,0.15); animation-direction: reverse; animation-duration: 15s; }
-    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .khanda-svg-wrap {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      font-size: 130px; animation: glow-pulse 4s ease-in-out infinite;
+    .hero-desc {
+      font-size:1.05rem; color:var(--text-2);
+      line-height:1.75; max-width:500px;
+      margin-bottom:36px;
     }
-    @keyframes glow-pulse {
-      0%,100% { filter: drop-shadow(0 0 30px rgba(232,132,10,0.35)); }
-      50% { filter: drop-shadow(0 0 60px rgba(232,132,10,0.65)); }
-    }
-    .hero-stats-row {
-      display: grid; grid-template-columns: repeat(3,1fr); gap: 20px;
-      margin-top: 44px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.08);
-    }
-    .hero-stat-number { font-size: 2rem; font-weight: 800; color: var(--white); line-height: 1; font-family: 'Playfair Display', serif; }
-    .hero-stat-number span { background: linear-gradient(135deg, var(--saffron-light), var(--gold-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .hero-stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.45); font-weight: 500; margin-top: 4px; }
 
-    /* ── COMMON SECTION ── */
-    section { padding: 96px 24px; }
-    .container { max-width: 1280px; margin: 0 auto; }
-    .section-header { margin-bottom: 52px; }
-    .section-label {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.76rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--saffron); margin-bottom: 12px;
+    .hero-actions { display:flex; gap:12px; flex-wrap:wrap; }
+    .btn-gold {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:13px 26px;
+      background:var(--gold);
+      color:#000; border-radius:12px;
+      font-weight:700; font-size:0.9rem;
+      text-decoration:none;
+      box-shadow:0 0 30px rgba(240,165,0,0.35);
+      transition:all 0.2s var(--ease);
+      letter-spacing:-0.01em;
     }
-    .section-label::before { content: ''; width: 24px; height: 2px; background: var(--saffron); border-radius: 2px; }
-    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem,3vw,2.6rem); font-weight: 700; color: var(--navy); line-height: 1.2; letter-spacing: -0.02em; }
-    .section-desc { font-size: 1.02rem; color: var(--gray-500); max-width: 560px; margin-top: 12px; }
+    .btn-gold:hover {
+      background:var(--gold-2);
+      transform:translateY(-2px);
+      box-shadow:0 0 50px rgba(240,165,0,0.5);
+    }
+    .btn-ghost {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:13px 26px;
+      background:var(--surface);
+      color:var(--text-1);
+      border:1px solid var(--border-2);
+      border-radius:12px;
+      font-weight:600; font-size:0.9rem;
+      text-decoration:none;
+      transition:all 0.2s var(--ease);
+    }
+    .btn-ghost:hover {
+      background:var(--surface-2);
+      border-color:rgba(255,255,255,0.15);
+      transform:translateY(-2px);
+    }
 
-    /* ── FEATURED COLLECTIONS ── */
-    .featured { background: var(--white); }
-    .featured-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: auto auto; gap: 20px; }
-    .collection-card { border-radius: var(--radius-lg); overflow: hidden; text-decoration: none; display: block; transition: var(--transition); }
-    .collection-card:hover { transform: translateY(-4px); }
-    .card-inner {
-      position: relative; min-height: 220px; padding: 32px;
-      display: flex; flex-direction: column; justify-content: flex-end;
-      transition: var(--transition); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden;
+    .hero-stats {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:0; margin-top:52px;
+      padding-top:40px;
+      border-top:1px solid var(--border);
     }
-    .collection-card:hover .card-inner { box-shadow: var(--shadow-lg); }
-    .card-inner::before { content: ''; position: absolute; inset: 0; background: inherit; filter: brightness(0.85); z-index: 0; transition: var(--transition); }
-    .collection-card:hover .card-inner::before { filter: brightness(0.72); }
-    .card-content { position: relative; z-index: 1; }
-    .card-icon { font-size: 2.4rem; margin-bottom: 12px; display: block; }
-    .card-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-    .card-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
-    .card-meta { font-size: 0.82rem; font-weight: 500; opacity: 0.75; }
-    .card-arrow { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.2); margin-top: 16px; transition: var(--transition); }
-    .collection-card:hover .card-arrow { background: rgba(255,255,255,0.35); transform: translateX(4px); }
-    .card-bani .card-inner { background: linear-gradient(135deg,#1A2557,#253071); color: white; }
-    .card-bani .card-label { color: var(--saffron-light); }
-    .card-bani { grid-row: span 2; }
-    .card-bani .card-inner { min-height: 460px; }
-    .card-historical .card-inner { background: linear-gradient(135deg,#7B3F00,#A0522D); color: white; }
-    .card-historical .card-label { color: #FBBF77; }
-    .card-biographical .card-inner { background: linear-gradient(135deg,#1A4731,#2D6A4F); color: white; }
-    .card-biographical .card-label { color: #86EFAC; }
-    .card-rehat .card-inner { background: linear-gradient(135deg,#4A1942,#7B2D8B); color: white; }
-    .card-rehat .card-label { color: #E879F9; }
-    .card-hukam .card-inner { background: linear-gradient(135deg,#7C2D12,#C2410C); color: white; }
-    .card-hukam .card-label { color: #FCA5A5; }
+    .hero-stat { padding:0 24px 0 0; }
+    .hero-stat + .hero-stat {
+      padding-left:24px;
+      border-left:1px solid var(--border);
+    }
+    .stat-number {
+      font-family:'Playfair Display',serif;
+      font-size:2.2rem; font-weight:700;
+      color:var(--gold); line-height:1;
+    }
+    .stat-label {
+      font-size:0.78rem; color:var(--text-3);
+      font-weight:500; margin-top:6px;
+      letter-spacing:0.02em;
+    }
+
+    /* Hero visual — Khanda */
+    .hero-visual {
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+    }
+    .khanda-wrap {
+      position:relative; width:300px; height:300px;
+    }
+    .khanda-ring {
+      position:absolute; border-radius:50%;
+      border:1px solid rgba(240,165,0,0.15);
+    }
+    .kr-1 { inset:0; animation:spin 25s linear infinite; }
+    .kr-2 { inset:24px; border-color:rgba(240,165,0,0.08); animation:spin 18s linear infinite reverse; }
+    .kr-3 { inset:48px; border-color:rgba(240,165,0,0.05); animation:spin 30s linear infinite; }
+    @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+    /* Dots on ring */
+    .kr-1::before,.kr-1::after {
+      content:''; position:absolute;
+      width:6px; height:6px; border-radius:50%;
+      background:var(--gold);
+      top:50%; left:-3px; margin-top:-3px;
+      box-shadow:0 0 8px var(--gold);
+    }
+    .kr-1::after { left:auto; right:-3px; }
+
+    .khanda-icon {
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:120px;
+      filter:drop-shadow(0 0 30px rgba(240,165,0,0.5));
+      animation:glow-breathe 4s ease-in-out infinite;
+    }
+    @keyframes glow-breathe {
+      0%,100% { filter:drop-shadow(0 0 20px rgba(240,165,0,0.4)); transform:scale(1); }
+      50%  { filter:drop-shadow(0 0 60px rgba(240,165,0,0.7)); transform:scale(1.02); }
+    }
+
+    /* Floating badge on visual */
+    .khanda-badge {
+      position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
+      background:var(--surface);
+      border:1px solid var(--border-2);
+      border-radius:12px;
+      padding:10px 20px;
+      display:flex; align-items:center; gap:10px;
+      white-space:nowrap;
+      box-shadow:0 8px 32px rgba(0,0,0,0.4);
+    }
+    .badge-dot { width:8px; height:8px; border-radius:50%; background:#22C55E; box-shadow:0 0 8px #22C55E; }
+    .badge-text { font-size:0.8rem; font-weight:600; color:var(--text-1); }
+
+    /* ── SECTION COMMON ── */
+    .section { padding:100px 24px; }
+    .container { max-width:1280px; margin:0 auto; }
+    .section-eyebrow {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:0.72rem; font-weight:700;
+      letter-spacing:0.1em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:12px;
+    }
+    .section-eyebrow::before {
+      content:''; width:20px; height:1.5px;
+      background:var(--gold); border-radius:2px;
+    }
+    .section-title {
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.8rem,3vw,2.6rem);
+      font-weight:700; color:var(--text-1);
+      line-height:1.15; letter-spacing:-0.03em;
+    }
+    .section-desc {
+      font-size:1rem; color:var(--text-2);
+      max-width:520px; margin-top:12px; line-height:1.75;
+    }
+
+    /* ── FEATURED CARDS ── */
+    .featured { background:var(--bg-2); }
+    .featured-grid {
+      display:grid;
+      grid-template-columns:1.8fr 1fr 1fr;
+      grid-template-rows:auto auto;
+      gap:16px; margin-top:48px;
+    }
+    .feat-card {
+      position:relative; overflow:hidden;
+      border-radius:var(--radius-lg);
+      border:1px solid var(--border);
+      text-decoration:none; display:block;
+      transition:all 0.3s var(--ease);
+      background:var(--surface);
+    }
+    .feat-card::before {
+      content:''; position:absolute; inset:0;
+      background:inherit; z-index:0;
+      transition:opacity 0.3s;
+    }
+    .feat-card:hover {
+      border-color:rgba(240,165,0,0.3);
+      transform:translateY(-4px);
+      box-shadow:0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(240,165,0,0.1);
+    }
+    .feat-card-inner {
+      position:relative; z-index:1;
+      padding:32px; display:flex;
+      flex-direction:column; justify-content:flex-end;
+      min-height:240px;
+    }
+    .feat-card-bg {
+      position:absolute; inset:0; z-index:0;
+      opacity:0.9; transition:opacity 0.3s;
+    }
+    .feat-card:hover .feat-card-bg { opacity:1; }
+    .feat-card-content { position:relative; z-index:1; }
+    .feat-card-tag {
+      font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+      text-transform:uppercase; margin-bottom:8px;
+      opacity:0.7;
+    }
+    .feat-card-title {
+      font-family:'Playfair Display',serif;
+      font-size:1.3rem; font-weight:700;
+      line-height:1.2; margin-bottom:8px;
+    }
+    .feat-card-meta {
+      font-size:0.8rem; opacity:0.6; margin-bottom:16px;
+    }
+    .feat-card-arrow {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:32px; height:32px; border-radius:8px;
+      background:rgba(255,255,255,0.15);
+      transition:all 0.2s var(--ease);
+    }
+    .feat-card:hover .feat-card-arrow {
+      background:rgba(255,255,255,0.25);
+      transform:translateX(4px);
+    }
+
+    .fc-bani .feat-card-bg { background:linear-gradient(160deg,#0a1628,#162447); }
+    .fc-bani { grid-row:span 2; }
+    .fc-bani .feat-card-inner { min-height:500px; }
+    .fc-bani .feat-card-tag { color:#93C5FD; }
+    .fc-bani .feat-card-title { color:#E0F2FE; }
+
+    .fc-hist .feat-card-bg { background:linear-gradient(160deg,#1c0a00,#3d1400); }
+    .fc-hist .feat-card-tag { color:#FCD34D; }
+    .fc-hist .feat-card-title { color:#FEF3C7; }
+
+    .fc-bio .feat-card-bg { background:linear-gradient(160deg,#052014,#0a3d20); }
+    .fc-bio .feat-card-tag { color:#86EFAC; }
+    .fc-bio .feat-card-title { color:#DCFCE7; }
+
+    .fc-rehat .feat-card-bg { background:linear-gradient(160deg,#1a0533,#350d5c); }
+    .fc-rehat .feat-card-tag { color:#D8B4FE; }
+    .fc-rehat .feat-card-title { color:#F3E8FF; }
+
+    .fc-hukam .feat-card-bg { background:linear-gradient(160deg,#1c0500,#3d0e00); }
+    .fc-hukam .feat-card-tag { color:#FCA5A5; }
+    .fc-hukam .feat-card-title { color:#FEE2E2; }
 
     /* ── BROWSE ── */
-    .browse { background: var(--cream); }
-    .browse-header-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
-    .browse-filter { display: flex; gap: 8px; flex-wrap: wrap; }
-    .filter-btn {
-      padding: 7px 16px; border-radius: 50px; border: 1.5px solid var(--gray-200);
-      background: var(--white); color: var(--gray-600); font-size: 0.82rem; font-weight: 500;
-      cursor: pointer; transition: var(--transition); font-family: inherit;
+    .browse { background:var(--bg); }
+    .browse-top {
+      display:flex; align-items:flex-end;
+      justify-content:space-between; margin-bottom:32px;
+      flex-wrap:wrap; gap:20px;
     }
-    .filter-btn:hover, .filter-btn.active { border-color: var(--saffron); background: rgba(232,132,10,0.06); color: var(--saffron); }
-    .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr)); gap: 14px; }
-    .category-card {
-      background: var(--white); border-radius: var(--radius); padding: 22px;
-      text-decoration: none; display: flex; align-items: flex-start; gap: 14px;
-      border: 1.5px solid var(--gray-100); transition: var(--transition); cursor: pointer;
+    .filter-group { display:flex; gap:6px; }
+    .filter-pill {
+      padding:6px 16px; border-radius:99px;
+      border:1px solid var(--border-2);
+      background:transparent;
+      color:var(--text-2); font-size:0.8rem; font-weight:600;
+      cursor:pointer; transition:all 0.2s var(--ease);
+      font-family:inherit;
     }
-    .category-card:hover { border-color: var(--saffron); box-shadow: 0 4px 24px rgba(232,132,10,0.1); transform: translateY(-2px); }
-    .cat-icon-wrap { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
-    .cat-name { font-weight: 600; font-size: 0.92rem; color: var(--gray-800); line-height: 1.3; }
-    .cat-count { font-size: 0.76rem; color: var(--gray-400); margin-top: 4px; }
-    .cat-arrow { margin-left: auto; color: var(--gray-300); transition: var(--transition); flex-shrink: 0; margin-top: 2px; }
-    .category-card:hover .cat-arrow { color: var(--saffron); transform: translateX(3px); }
+    .filter-pill:hover { color:var(--text-1); border-color:rgba(255,255,255,0.15); }
+    .filter-pill.active {
+      background:var(--gold-dim);
+      border-color:rgba(240,165,0,0.35);
+      color:var(--gold);
+    }
+    .cat-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:12px;
+    }
+    .cat-card {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:20px 22px;
+      display:flex; align-items:center; gap:14px;
+      cursor:pointer; transition:all 0.2s var(--ease);
+    }
+    .cat-card:hover {
+      border-color:rgba(240,165,0,0.25);
+      background:var(--surface-2);
+      transform:translateY(-2px);
+      box-shadow:0 8px 32px rgba(0,0,0,0.3);
+    }
+    .cat-icon {
+      width:44px; height:44px; border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; flex-shrink:0;
+      background:var(--bg-3);
+    }
+    .cat-name {
+      font-weight:600; font-size:0.875rem;
+      color:var(--text-1); line-height:1.3; flex:1;
+    }
+    .cat-count {
+      font-size:0.73rem; color:var(--text-3); margin-top:3px;
+    }
+    .cat-chevron {
+      color:var(--text-3); transition:all 0.2s var(--ease); flex-shrink:0;
+    }
+    .cat-card:hover .cat-chevron { color:var(--gold); transform:translateX(3px); }
 
     /* ── SCRIPTURES ── */
-    .scriptures { background: var(--white); }
-    .scriptures-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-bottom: 56px; }
-    .scripture-list { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
-    .scripture-item {
-      background: var(--cream); border-radius: var(--radius); padding: 14px 18px;
-      text-decoration: none; border: 1.5px solid transparent; transition: var(--transition);
-      display: flex; align-items: center; gap: 12px; cursor: pointer;
+    .scriptures { background:var(--bg-2); }
+    .scriptures-grid-wrap {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:72px; align-items:center; margin-bottom:56px;
     }
-    .scripture-item:hover { border-color: var(--saffron); background: rgba(232,132,10,0.04); }
-    .scripture-icon { font-size: 1.3rem; flex-shrink: 0; }
-    .scripture-name { font-weight: 600; font-size: 0.86rem; color: var(--gray-700); line-height: 1.3; }
-    .scripture-lang { font-size: 0.72rem; color: var(--gray-400); margin-top: 2px; }
+    .scripture-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:8px;
+    }
+    .scripture-pill {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:10px; padding:13px 16px;
+      display:flex; align-items:center; gap:10px;
+      cursor:pointer; transition:all 0.2s var(--ease);
+    }
+    .scripture-pill:hover {
+      border-color:rgba(240,165,0,0.3);
+      background:var(--surface-2);
+    }
+    .sp-icon { font-size:1.2rem; flex-shrink:0; }
+    .sp-name {
+      font-weight:600; font-size:0.83rem;
+      color:var(--text-1); line-height:1.3;
+    }
+    .sp-lang {
+      font-size:0.7rem; color:var(--text-3); margin-top:2px;
+    }
+    .notice-box {
+      background:rgba(240,165,0,0.05);
+      border:1px solid rgba(240,165,0,0.15);
+      border-radius:var(--radius-lg);
+      padding:24px 28px;
+      display:flex; gap:16px;
+      max-width:860px; margin:0 auto;
+    }
+    .notice-icon { font-size:1.3rem; flex-shrink:0; padding-top:2px; }
+    .notice-title { font-weight:700; font-size:0.875rem; color:var(--gold); margin-bottom:4px; }
+    .notice-text { font-size:0.85rem; color:var(--text-2); line-height:1.65; }
 
     /* ── SCHOLARS ── */
-    .scholars { background: var(--navy-dark); padding: 96px 24px; }
-    .scholars .section-title { color: var(--white); }
-    .scholars .section-desc { color: rgba(255,255,255,0.5); }
-    .scholars .section-label { color: var(--saffron-light); }
-    .scholars .section-label::before { background: var(--saffron-light); }
-    .scholars-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 12px; margin-top: 40px; }
-    .scholar-card {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: var(--radius); padding: 18px 20px;
-      display: flex; align-items: center; gap: 12px; cursor: pointer; transition: var(--transition);
+    .scholars-section { background:var(--bg); }
+    .scholars-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:10px; margin-top:40px;
     }
-    .scholar-card:hover { background: rgba(232,132,10,0.12); border-color: rgba(232,132,10,0.3); transform: translateY(-2px); }
-    .scholar-avatar { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg,var(--saffron),var(--saffron-light)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
-    .scholar-name { font-weight: 600; font-size: 0.84rem; color: var(--white); line-height: 1.3; }
-    .scholar-count { font-size: 0.73rem; color: rgba(255,255,255,0.4); margin-top: 3px; }
+    .scholar-card {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px 20px;
+      display:flex; align-items:center; gap:12px;
+      cursor:pointer; transition:all 0.2s var(--ease);
+    }
+    .scholar-card:hover {
+      border-color:rgba(240,165,0,0.25);
+      background:var(--surface-2);
+      transform:translateY(-2px);
+    }
+    .scholar-av {
+      width:40px; height:40px; border-radius:10px;
+      background:linear-gradient(135deg,var(--gold),var(--gold-2));
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; flex-shrink:0;
+      box-shadow:0 0 12px rgba(240,165,0,0.2);
+    }
+    .scholar-name {
+      font-weight:600; font-size:0.83rem;
+      color:var(--text-1); line-height:1.3;
+    }
+    .scholar-count { font-size:0.72rem; color:var(--text-3); margin-top:3px; }
 
     /* ── ABOUT ── */
-    .about { background: var(--cream-dark); }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-    .about-visual { position: relative; height: 380px; }
-    .about-card { position: absolute; background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); padding: 28px; }
-    .about-card-1 { top: 0; left: 0; right: 60px; background: linear-gradient(135deg,var(--navy),var(--navy-light)); color: var(--white); }
-    .about-card-2 { bottom: 0; left: 60px; right: 0; }
-    .about-card-quote { font-family: 'Playfair Display', serif; font-size: 1.1rem; line-height: 1.6; font-style: italic; }
-    .about-card-1 .about-card-quote { color: rgba(255,255,255,0.85); }
-    .about-card-2 .about-card-quote { color: var(--gray-700); }
-    .about-card-source { margin-top: 14px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; }
-    .about-card-1 .about-card-source { color: var(--saffron-light); }
-    .about-card-2 .about-card-source { color: var(--saffron); }
-    .about-text p { font-size: 1.02rem; color: var(--gray-600); line-height: 1.75; margin-bottom: 18px; }
-    .about-text strong { color: var(--navy); font-weight: 600; }
-    .about-values { display: flex; flex-direction: column; gap: 16px; margin-top: 28px; }
-    .about-value { display: flex; align-items: flex-start; gap: 14px; }
-    .value-icon { width: 38px; height: 38px; border-radius: 10px; background: rgba(232,132,10,0.1); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
-    .value-title { font-weight: 600; color: var(--navy); font-size: 0.92rem; }
-    .value-desc { font-size: 0.82rem; color: var(--gray-500); margin-top: 3px; }
-
-    /* ── NOTICE ── */
-    .notice-banner {
-      background: linear-gradient(135deg,rgba(232,132,10,0.07),rgba(212,160,23,0.05));
-      border: 1.5px solid rgba(232,132,10,0.2); border-radius: var(--radius-lg);
-      padding: 24px 32px; display: flex; align-items: flex-start; gap: 18px;
-      margin: 0 auto; max-width: 900px;
+    .about-section { background:var(--bg-2); }
+    .about-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:80px; align-items:center;
     }
-    .notice-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
-    .notice-title { font-weight: 700; color: var(--saffron-dark); font-size: 0.92rem; margin-bottom: 4px; }
-    .notice-text { font-size: 0.88rem; color: var(--gray-600); line-height: 1.6; }
+    .quote-stack { position:relative; height:360px; }
+    .quote-card {
+      position:absolute; border-radius:var(--radius-lg);
+      padding:28px;
+      border:1px solid var(--border-2);
+      box-shadow:0 24px 64px rgba(0,0,0,0.4);
+    }
+    .qc-1 {
+      top:0; left:0; right:60px;
+      background:linear-gradient(135deg,var(--surface-2),var(--bg-3));
+    }
+    .qc-2 {
+      bottom:0; left:60px; right:0;
+      background:var(--surface);
+    }
+    .quote-text {
+      font-family:'Playfair Display',serif;
+      font-size:1.05rem; line-height:1.65;
+      font-style:italic; color:var(--text-1);
+    }
+    .quote-source {
+      margin-top:14px; font-size:0.75rem;
+      font-weight:700; letter-spacing:0.05em;
+      color:var(--gold); text-transform:uppercase;
+    }
+    .qc-2 .quote-text { color:var(--text-2); }
+    .about-values { display:flex; flex-direction:column; gap:20px; margin-top:32px; }
+    .about-val {
+      display:flex; align-items:flex-start; gap:14px;
+      padding:18px 20px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      transition:all 0.2s var(--ease);
+    }
+    .about-val:hover { border-color:rgba(240,165,0,0.2); }
+    .val-icon {
+      width:38px; height:38px; border-radius:9px;
+      background:var(--gold-dim);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; flex-shrink:0;
+    }
+    .val-title { font-weight:700; font-size:0.875rem; color:var(--text-1); }
+    .val-desc { font-size:0.8rem; color:var(--text-3); margin-top:3px; line-height:1.5; }
 
     /* ── FOOTER ── */
-    footer { background: var(--navy-dark); padding: 80px 24px 40px; }
-    .footer-inner { max-width: 1280px; margin: 0 auto; }
-    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 60px; }
-    .footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-    .footer-logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg,var(--saffron),var(--saffron-light)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-    .footer-logo-text { font-size: 1.2rem; font-weight: 700; color: var(--white); }
-    .footer-logo-text span { color: var(--saffron-light); }
-    .footer-tagline { font-size: 0.88rem; color: rgba(255,255,255,0.4); line-height: 1.7; max-width: 270px; }
-    .footer-col-title { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 18px; }
-    .footer-links { display: flex; flex-direction: column; gap: 10px; }
-    .footer-link { font-size: 0.88rem; color: rgba(255,255,255,0.55); text-decoration: none; transition: var(--transition); cursor: pointer; background: none; border: none; font-family: inherit; text-align: left; padding: 0; }
-    .footer-link:hover { color: var(--saffron-light); }
-    .footer-bottom { padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-    .footer-copy { font-size: 0.82rem; color: rgba(255,255,255,0.3); }
-    .footer-note { font-size: 0.78rem; color: rgba(255,255,255,0.22); font-style: italic; max-width: 480px; text-align: right; }
+    footer {
+      background:var(--bg);
+      border-top:1px solid var(--border);
+      padding:72px 24px 40px;
+    }
+    .footer-inner { max-width:1280px; margin:0 auto; }
+    .footer-top {
+      display:grid;
+      grid-template-columns:2fr 1fr 1fr 1fr;
+      gap:48px; margin-bottom:56px;
+    }
+    .footer-brand-logo {
+      display:flex; align-items:center; gap:10px; margin-bottom:14px;
+    }
+    .footer-brand-mark {
+      width:34px; height:34px; border-radius:9px;
+      background:linear-gradient(135deg,var(--gold),var(--gold-2));
+      display:flex; align-items:center; justify-content:center;
+      font-size:17px;
+    }
+    .footer-brand-name {
+      font-size:1.1rem; font-weight:700; color:var(--text-1);
+    }
+    .footer-brand-name span { color:var(--gold); }
+    .footer-tagline {
+      font-size:0.85rem; color:var(--text-3);
+      line-height:1.7; max-width:260px;
+    }
+    .footer-col-title {
+      font-size:0.72rem; font-weight:700;
+      letter-spacing:0.1em; text-transform:uppercase;
+      color:var(--text-3); margin-bottom:18px;
+    }
+    .footer-links { display:flex; flex-direction:column; gap:10px; }
+    .footer-link {
+      font-size:0.875rem; color:var(--text-2);
+      text-decoration:none; background:none; border:none;
+      font-family:inherit; text-align:left; padding:0;
+      cursor:pointer; transition:color 0.15s;
+    }
+    .footer-link:hover { color:var(--gold); }
+    .footer-bottom {
+      padding-top:28px;
+      border-top:1px solid var(--border);
+      display:flex; align-items:center;
+      justify-content:space-between; flex-wrap:wrap; gap:12px;
+    }
+    .footer-copy { font-size:0.8rem; color:var(--text-3); }
+    .footer-note { font-size:0.75rem; color:var(--text-3); font-style:italic; max-width:460px; text-align:right; }
 
-    /* ── SCROLL ANIMATIONS ── */
-    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
-    .fade-up.visible { opacity: 1; transform: translateY(0); }
-    .fade-up-delay-1 { transition-delay: 0.1s; }
-    .fade-up-delay-2 { transition-delay: 0.2s; }
+    /* ── FADE ANIMATIONS ── */
+    .fade-up {
+      opacity:0; transform:translateY(28px);
+      transition:opacity 0.65s var(--ease), transform 0.65s var(--ease);
+    }
+    .fade-up.visible { opacity:1; transform:translateY(0); }
+    .delay-1 { transition-delay:0.1s; }
+    .delay-2 { transition-delay:0.2s; }
+    .delay-3 { transition-delay:0.3s; }
 
     /* ── MODAL ── */
     .modal-overlay {
-      display: none; position: fixed; inset: 0; z-index: 2000;
-      background: rgba(15,23,53,0.7); backdrop-filter: blur(12px);
+      display:none; position:fixed; inset:0; z-index:2000;
+      background:rgba(0,0,0,0.75);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
     }
-    .modal-overlay.open { display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .modal-overlay.open {
+      display:flex; align-items:center;
+      justify-content:center; padding:24px;
+    }
     .modal {
-      background: var(--white); border-radius: var(--radius-xl); width: 100%; max-width: 740px;
-      max-height: 88vh; display: flex; flex-direction: column;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.25); overflow: hidden;
+      background:var(--surface);
+      border:1px solid var(--border-2);
+      border-radius:var(--radius-xl);
+      width:100%; max-width:720px;
+      max-height:88vh; display:flex;
+      flex-direction:column;
+      box-shadow:0 40px 100px rgba(0,0,0,0.7);
+      overflow:hidden;
     }
-    .modal-header { padding: 22px 28px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; gap: 14px; }
-    .modal-title-area { flex: 1; }
-    .modal-folder-title { font-weight: 700; font-size: 1.05rem; color: var(--gray-900); }
-    .modal-breadcrumb { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; color: var(--gray-400); margin-top: 4px; flex-wrap: wrap; }
-    .modal-breadcrumb-item { color: var(--saffron); cursor: pointer; font-weight: 500; }
-    .modal-breadcrumb-item:hover { text-decoration: underline; }
-    .modal-breadcrumb-sep { color: var(--gray-300); }
-    .modal-close { width: 34px; height: 34px; border: none; background: var(--gray-100); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--gray-500); transition: var(--transition); }
-    .modal-close:hover { background: var(--gray-200); color: var(--gray-800); }
-    .modal-search-wrap { padding: 14px 28px; border-bottom: 1px solid var(--gray-100); position: relative; }
-    .modal-search-wrap input { width: 100%; padding: 9px 14px 9px 36px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 0.88rem; font-family: inherit; outline: none; transition: var(--transition); }
-    .modal-search-wrap input:focus { border-color: var(--saffron); box-shadow: 0 0 0 3px rgba(232,132,10,0.1); }
-    .modal-search-ico { position: absolute; left: 42px; top: 50%; transform: translateY(-50%); color: var(--gray-400); pointer-events: none; }
-    .modal-body { overflow-y: auto; flex: 1; }
-    .modal-empty { padding: 48px 28px; text-align: center; color: var(--gray-400); font-size: 0.9rem; }
+    .modal-header {
+      padding:20px 24px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:14px;
+    }
+    .modal-title-block { flex:1; }
+    .modal-folder-title {
+      font-weight:700; font-size:1rem; color:var(--text-1);
+    }
+    .modal-breadcrumb {
+      display:flex; align-items:center;
+      gap:5px; font-size:0.76rem; margin-top:3px;
+      color:var(--text-3); flex-wrap:wrap;
+    }
+    .modal-bc-item {
+      color:var(--gold); cursor:pointer; font-weight:500;
+      transition:opacity 0.15s;
+    }
+    .modal-bc-item:hover { opacity:0.7; }
+    .modal-bc-sep { color:var(--text-3); }
+    .modal-close {
+      width:32px; height:32px; border-radius:8px;
+      background:var(--bg-3); border:none;
+      color:var(--text-2); cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; transition:all 0.15s;
+    }
+    .modal-close:hover { background:var(--surface-2); color:var(--text-1); }
+    .modal-search-bar {
+      padding:12px 24px;
+      border-bottom:1px solid var(--border);
+      position:relative;
+    }
+    .modal-search-bar input {
+      width:100%; padding:9px 14px 9px 36px;
+      background:var(--bg-3);
+      border:1px solid var(--border-2);
+      border-radius:9px;
+      color:var(--text-1);
+      font-size:0.875rem; font-family:inherit;
+      outline:none; transition:all 0.2s var(--ease);
+    }
+    .modal-search-bar input:focus {
+      border-color:rgba(240,165,0,0.35);
+      background:var(--bg-2);
+    }
+    .modal-search-bar input::placeholder { color:var(--text-3); }
+    .modal-search-ico {
+      position:absolute; left:36px; top:50%;
+      transform:translateY(-50%);
+      color:var(--text-3); pointer-events:none;
+    }
+    .modal-body { overflow-y:auto; flex:1; }
+    .modal-empty {
+      padding:48px; text-align:center;
+      color:var(--text-3); font-size:0.875rem;
+    }
     .modal-file-item {
-      display: flex; align-items: center; gap: 14px; padding: 13px 28px;
-      cursor: pointer; transition: var(--transition); border-bottom: 1px solid var(--gray-50);
+      display:flex; align-items:center; gap:12px;
+      padding:12px 24px;
+      border-bottom:1px solid var(--border);
+      cursor:pointer; transition:background 0.15s;
     }
-    .modal-file-item:hover { background: var(--cream); }
-    .mfi-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
-    .ico-folder { background: rgba(232,132,10,0.1); }
-    .ico-pdf { background: rgba(220,38,38,0.08); }
-    .ico-audio { background: rgba(16,185,129,0.08); }
-    .ico-image { background: rgba(99,102,241,0.08); }
-    .ico-other { background: rgba(107,114,128,0.08); }
-    .mfi-name { flex: 1; font-size: 0.88rem; font-weight: 500; color: var(--gray-800); word-break: break-word; }
-    .mfi-size { font-size: 0.74rem; color: var(--gray-400); white-space: nowrap; flex-shrink: 0; }
-    .mfi-arrow { color: var(--gray-300); font-size: 0.8rem; flex-shrink: 0; }
-    .modal-file-item:hover .mfi-arrow { color: var(--saffron); }
+    .modal-file-item:hover { background:var(--bg-3); }
+    .mfi-icon {
+      width:34px; height:34px; border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.95rem; flex-shrink:0;
+    }
+    .ico-folder { background:rgba(240,165,0,0.1); }
+    .ico-pdf    { background:rgba(239,68,68,0.08); }
+    .ico-audio  { background:rgba(34,197,94,0.08); }
+    .ico-image  { background:rgba(99,102,241,0.08); }
+    .ico-other  { background:var(--bg-3); }
+    .mfi-name {
+      flex:1; font-size:0.85rem; font-weight:500;
+      color:var(--text-1); word-break:break-word;
+    }
+    .mfi-size {
+      font-size:0.72rem; color:var(--text-3);
+      white-space:nowrap; flex-shrink:0;
+    }
+    .mfi-arrow {
+      color:var(--text-3); font-size:0.8rem; flex-shrink:0;
+      transition:color 0.15s;
+    }
+    .modal-file-item:hover .mfi-arrow { color:var(--gold); }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 1100px) {
-      .hero-content { grid-template-columns: 1fr; gap: 48px; }
-      .hero-visual { order: -1; }
-      .khanda-container { width: 240px; height: 240px; }
-      .khanda-svg-wrap { font-size: 96px; }
-      .featured-grid { grid-template-columns: 1fr 1fr; }
-      .card-bani { grid-row: span 1; }
-      .card-bani .card-inner { min-height: 220px; }
-      .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+    @media(max-width:1100px) {
+      .hero-content { grid-template-columns:1fr; gap:48px; }
+      .hero-visual { order:-1; }
+      .khanda-wrap { width:220px; height:220px; }
+      .khanda-icon { font-size:88px; }
+      .featured-grid { grid-template-columns:1fr 1fr; }
+      .fc-bani { grid-row:span 1; }
+      .fc-bani .feat-card-inner { min-height:240px; }
+      .footer-top { grid-template-columns:1fr 1fr; gap:32px; }
+      .about-grid { grid-template-columns:1fr; }
+      .quote-stack { display:none; }
     }
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .hero { padding: 90px 20px 60px; min-height: auto; }
-      .featured-grid { grid-template-columns: 1fr; }
-      .about-grid { grid-template-columns: 1fr; }
-      .about-visual { display: none; }
-      .scriptures-intro { grid-template-columns: 1fr; gap: 36px; }
-      .scripture-list { grid-template-columns: 1fr; }
-      section { padding: 64px 20px; }
-      .footer-top { grid-template-columns: 1fr; }
-      .footer-bottom { flex-direction: column; align-items: flex-start; }
-      .footer-note { text-align: left; }
+    @media(max-width:768px) {
+      .nav-links { display:none; }
+      .hero { padding:90px 20px 60px; min-height:auto; }
+      .hero-stats { grid-template-columns:repeat(3,1fr); }
+      .featured-grid { grid-template-columns:1fr; }
+      .scriptures-grid-wrap { grid-template-columns:1fr; gap:36px; }
+      .scripture-grid { grid-template-columns:1fr; }
+      .section { padding:64px 20px; }
+      .footer-top { grid-template-columns:1fr; }
+      .footer-bottom { flex-direction:column; align-items:flex-start; }
+      .footer-note { text-align:left; }
     }
-    @media (max-width: 480px) {
-      .nav-search { display: none; }
-      .hero-title { font-size: 2.1rem; }
+    @media(max-width:480px) {
+      .nav-search { display:none; }
+      .hero-title { font-size:2.4rem; }
+      .khanda-badge { display:none; }
     }
   </style>
 </head>
 <body>
 
-<!-- ====== NAVBAR ====== -->
+<!-- ── NAVBAR ── -->
 <nav class="navbar" id="navbar">
   <div class="nav-inner">
     <a href="#" class="nav-logo">
-      <div class="nav-logo-icon">☬</div>
-      <span class="nav-logo-text">Vi<span>dhia</span></span>
+      <div class="nav-logo-mark">☬</div>
+      <span class="nav-logo-name">Vi<span>dhia</span></span>
     </a>
     <div class="nav-search">
-      <svg class="nav-search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="navSearchInput" placeholder="Search scriptures, scholars, or topics…" autocomplete="off"/>
+      <svg class="nav-search-ico" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="navSearchInput" placeholder="Search scriptures, scholars, topics…" autocomplete="off"/>
     </div>
     <div class="nav-links">
       <a href="#featured" class="nav-link">Collections</a>
@@ -452,150 +901,161 @@
 
 <!-- Search Overlay -->
 <div class="search-overlay" id="searchOverlay">
-  <div class="search-results-panel">
-    <div class="search-results-header" id="searchHeader">Type to search…</div>
+  <div class="search-panel">
+    <div class="search-panel-header" id="searchHeader">Type to search…</div>
     <div id="searchResults"></div>
   </div>
 </div>
 
-<!-- ====== HERO ====== -->
+<!-- ── HERO ── -->
 <section class="hero" id="home">
-  <div class="hero-bg"></div>
+  <div class="hero-aurora">
+    <div class="aurora-blob aurora-1"></div>
+    <div class="aurora-blob aurora-2"></div>
+    <div class="aurora-blob aurora-3"></div>
+  </div>
   <div class="hero-grid"></div>
-  <div class="hero-orb hero-orb-1"></div>
-  <div class="hero-orb hero-orb-2"></div>
   <div class="hero-content">
     <div>
-      <div class="hero-badge"><div class="hero-badge-dot"></div>Free &amp; Open Access · Promoting Awareness of Sikhi</div>
-      <h1 class="hero-title">Your Gateway to<br/><span class="highlight">Sikh Scripture</span><br/>&amp; Wisdom</h1>
-      <p class="hero-desc">A curated digital library of <em>Gurbani, historical texts, and scholarly works</em> on Sikhi — shared freely to foster understanding and awareness of the Sikh faith and its rich traditions.</p>
+      <div class="hero-eyebrow"><div class="eyebrow-dot"></div>Free &amp; Open Access · Awareness of Sikhi</div>
+      <h1 class="hero-title">
+        Your Gateway to<br/>
+        <span class="gold italic">Sikh Scripture</span><br/>
+        &amp; Wisdom
+      </h1>
+      <p class="hero-desc">These files are shared to promote awareness about Sikhi and to highlight various perspectives on the religion. Sharing these materials does not imply endorsement of any specific author or their work.</p>
       <div class="hero-actions">
-        <a href="#featured" class="btn-primary">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <a href="#featured" class="btn-gold">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
           Explore Collections
         </a>
-        <a href="#browse" class="btn-secondary">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          Browse All 526 Files
+        <a href="#browse" class="btn-ghost">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          Browse 526 Files
         </a>
       </div>
-      <div class="hero-stats-row">
-        <div><div class="hero-stat-number"><span>526</span></div><div class="hero-stat-label">Total Resources</div></div>
-        <div><div class="hero-stat-number"><span>32</span></div><div class="hero-stat-label">Authors &amp; Collections</div></div>
-        <div><div class="hero-stat-number"><span>Free</span></div><div class="hero-stat-label">Always &amp; Forever</div></div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="stat-number" data-count="526">0</div><div class="stat-label">Total Resources</div></div>
+        <div class="hero-stat"><div class="stat-number" data-count="32">0</div><div class="stat-label">Authors &amp; Collections</div></div>
+        <div class="hero-stat"><div class="stat-number">Free</div><div class="stat-label">Always &amp; Forever</div></div>
       </div>
     </div>
     <div class="hero-visual">
-      <div class="khanda-container">
-        <div class="khanda-ring"></div>
-        <div class="khanda-ring khanda-ring-2"></div>
-        <div class="khanda-svg-wrap">☬</div>
+      <div class="khanda-wrap">
+        <div class="khanda-ring kr-1"></div>
+        <div class="khanda-ring kr-2"></div>
+        <div class="khanda-ring kr-3"></div>
+        <div class="khanda-icon">☬</div>
+      </div>
+      <div class="khanda-badge">
+        <div class="badge-dot"></div>
+        <span class="badge-text">526 resources freely available</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ====== FEATURED ====== -->
-<section class="featured" id="featured">
+<!-- ── FEATURED ── -->
+<section class="section featured" id="featured">
   <div class="container">
     <div class="section-header fade-up">
-      <div class="section-label">Featured</div>
+      <div class="section-eyebrow">Featured</div>
       <h2 class="section-title">Explore Our Collections</h2>
-      <p class="section-desc">Carefully organized categories spanning sacred texts, historical works, and scholarly interpretation.</p>
+      <p class="section-desc">Carefully organized categories spanning sacred texts, historical accounts, and scholarly works.</p>
     </div>
-    <div class="featured-grid fade-up">
-      <a href="#" class="collection-card card-bani" onclick="openCategory('Bani');return false;">
-        <div class="card-inner">
-          <div class="card-content">
-            <span class="card-icon">📖</span>
-            <div class="card-label">Sacred Texts</div>
-            <div class="card-title">Bani — Gurbani &amp; Scriptures</div>
-            <p class="card-meta">Sri Guru Granth Sahib Ji · Sri Dasam Granth · Nitnem · 84 resources</p>
-            <div class="card-arrow"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    <div class="featured-grid fade-up delay-1">
+      <div class="feat-card fc-bani" onclick="openCategory('Bani')">
+        <div class="feat-card-bg"></div>
+        <div class="feat-card-inner">
+          <div class="feat-card-content">
+            <div class="feat-card-tag">Sacred Texts</div>
+            <div class="feat-card-title">Bani — Gurbani &amp; Scriptures</div>
+            <div class="feat-card-meta">Sri Guru Granth Sahib Ji · Sri Dasam Granth · Nitnem · 84 resources</div>
+            <div class="feat-card-arrow"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
         </div>
-      </a>
-      <a href="#" class="collection-card card-historical" onclick="openCategory('Historical, Political, Philosophical and Informational');return false;">
-        <div class="card-inner">
-          <div class="card-content">
-            <span class="card-icon">🏛️</span>
-            <div class="card-label">Historical Works</div>
-            <div class="card-title">Historical, Political &amp; Philosophical</div>
-            <p class="card-meta">90 resources</p>
-            <div class="card-arrow"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="feat-card fc-hist" onclick="openCategory('Historical, Political, Philosophical and Informational')">
+        <div class="feat-card-bg"></div>
+        <div class="feat-card-inner">
+          <div class="feat-card-content">
+            <div class="feat-card-tag">Historical</div>
+            <div class="feat-card-title">Historical, Political &amp; Philosophical</div>
+            <div class="feat-card-meta">90 resources</div>
+            <div class="feat-card-arrow"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
         </div>
-      </a>
-      <a href="#" class="collection-card card-biographical" onclick="openCategory('Biographical');return false;">
-        <div class="card-inner">
-          <div class="card-content">
-            <span class="card-icon">📜</span>
-            <div class="card-label">Biographical</div>
-            <div class="card-title">Lives &amp; Stories</div>
-            <p class="card-meta">Biographies of Sikh figures</p>
-            <div class="card-arrow"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="feat-card fc-bio" onclick="openCategory('Biographical')">
+        <div class="feat-card-bg"></div>
+        <div class="feat-card-inner">
+          <div class="feat-card-content">
+            <div class="feat-card-tag">Biographical</div>
+            <div class="feat-card-title">Lives &amp; Stories</div>
+            <div class="feat-card-meta">Biographies of Sikh figures</div>
+            <div class="feat-card-arrow"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
         </div>
-      </a>
-      <a href="#" class="collection-card card-rehat" onclick="openCategory('Rehat Maryada');return false;">
-        <div class="card-inner">
-          <div class="card-content">
-            <span class="card-icon">⚖️</span>
-            <div class="card-label">Code of Conduct</div>
-            <div class="card-title">Rehat Maryada</div>
-            <p class="card-meta">7 resources — Sikh code of conduct</p>
-            <div class="card-arrow"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="feat-card fc-rehat" onclick="openCategory('Rehat Maryada')">
+        <div class="feat-card-bg"></div>
+        <div class="feat-card-inner">
+          <div class="feat-card-content">
+            <div class="feat-card-tag">Code of Conduct</div>
+            <div class="feat-card-title">Rehat Maryada</div>
+            <div class="feat-card-meta">7 resources</div>
+            <div class="feat-card-arrow"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
         </div>
-      </a>
-      <a href="#" class="collection-card card-hukam" onclick="openCategory('Hukamnamey');return false;">
-        <div class="card-inner">
-          <div class="card-content">
-            <span class="card-icon">📋</span>
-            <div class="card-label">Edicts</div>
-            <div class="card-title">Hukamnamey</div>
-            <p class="card-meta">4 resources — Historical Sikh edicts</p>
-            <div class="card-arrow"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="feat-card fc-hukam" onclick="openCategory('Hukamnamey')">
+        <div class="feat-card-bg"></div>
+        <div class="feat-card-inner">
+          <div class="feat-card-content">
+            <div class="feat-card-tag">Edicts</div>
+            <div class="feat-card-title">Hukamnamey</div>
+            <div class="feat-card-meta">4 resources · Historical Sikh edicts</div>
+            <div class="feat-card-arrow"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
         </div>
-      </a>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ====== BROWSE ====== -->
-<section class="browse" id="browse">
+<!-- ── BROWSE ── -->
+<section class="section browse" id="browse">
   <div class="container">
-    <div class="browse-header-row">
-      <div class="section-header fade-up" style="margin-bottom:0">
-        <div class="section-label">Full Library</div>
+    <div class="browse-top">
+      <div class="fade-up">
+        <div class="section-eyebrow">Full Library</div>
         <h2 class="section-title">Browse All Collections</h2>
       </div>
-      <div class="browse-filter fade-up fade-up-delay-1">
-        <button class="filter-btn active" onclick="filterCats('all',this)">All</button>
-        <button class="filter-btn" onclick="filterCats('collection',this)">Collections</button>
-        <button class="filter-btn" onclick="filterCats('scholar',this)">Scholars</button>
+      <div class="filter-group fade-up delay-1">
+        <button class="filter-pill active" onclick="filterCats('all',this)">All</button>
+        <button class="filter-pill" onclick="filterCats('collection',this)">Collections</button>
+        <button class="filter-pill" onclick="filterCats('scholar',this)">Scholars</button>
       </div>
     </div>
-    <div class="categories-grid" id="categoriesGrid"></div>
+    <div class="cat-grid" id="categoriesGrid"></div>
   </div>
 </section>
 
-<!-- ====== SCRIPTURES ====== -->
-<section class="scriptures" id="scriptures">
+<!-- ── SCRIPTURES ── -->
+<section class="section scriptures" id="scriptures">
   <div class="container">
-    <div class="scriptures-intro">
+    <div class="scriptures-grid-wrap">
       <div class="fade-up">
-        <div class="section-label">Sacred Texts</div>
+        <div class="section-eyebrow">Sacred Texts</div>
         <h2 class="section-title">Gurbani &amp; Key Scriptures</h2>
-        <p class="section-desc" style="margin-top:12px">Primary texts of the Sikh faith — available in Gurmukhi, with meanings and transliterations. Access these foundational works directly.</p>
+        <p class="section-desc" style="margin-top:12px">Primary texts of the Sikh faith — available in Gurmukhi, with meanings and transliterations.</p>
         <div style="margin-top:28px">
-          <a href="#" class="btn-primary" onclick="openCategory('Bani');return false;" style="font-size:0.9rem;padding:12px 24px">View Full Bani Collection →</a>
+          <button class="btn-gold" onclick="openCategory('Bani')" style="font-size:0.85rem;padding:11px 22px;border:none;cursor:pointer">View Full Bani Collection →</button>
         </div>
       </div>
-      <div class="scripture-list fade-up fade-up-delay-1" id="scriptureList"></div>
+      <div class="scripture-grid fade-up delay-1" id="scriptureList"></div>
     </div>
-    <div class="notice-banner fade-up">
+    <div class="notice-box fade-up">
       <div class="notice-icon">ℹ️</div>
       <div>
         <div class="notice-title">About These Resources</div>
@@ -605,55 +1065,64 @@
   </div>
 </section>
 
-<!-- ====== SCHOLARS ====== -->
-<section class="scholars" id="scholars">
+<!-- ── SCHOLARS ── -->
+<section class="section scholars-section" id="scholars">
   <div class="container">
     <div class="section-header fade-up">
-      <div class="section-label">Scholars &amp; Authors</div>
+      <div class="section-eyebrow">Scholars &amp; Authors</div>
       <h2 class="section-title">Works by Notable Scholars</h2>
-      <p class="section-desc">Browse resources organized by their distinguished authors — theologians, historians, and Sikh intellectuals.</p>
+      <p class="section-desc">Browse resources organized by distinguished authors — theologians, historians, and Sikh intellectuals.</p>
     </div>
     <div class="scholars-grid" id="scholarsGrid"></div>
   </div>
 </section>
 
-<!-- ====== ABOUT ====== -->
-<section class="about" id="about">
+<!-- ── ABOUT ── -->
+<section class="section about-section" id="about">
   <div class="container">
     <div class="about-grid">
-      <div class="about-visual fade-up">
-        <div class="about-card about-card-1">
-          <div class="about-card-quote">"Nanak Nam Chardi Kala, Tere Bhane Sarbat Da Bhala"</div>
-          <div class="about-card-source">— Ardas, Sikh Daily Prayer</div>
+      <div class="quote-stack fade-up">
+        <div class="quote-card qc-1">
+          <div class="quote-text">"Nanak Nam Chardi Kala, Tere Bhane Sarbat Da Bhala"</div>
+          <div class="quote-source">— Ardas, Sikh Daily Prayer</div>
         </div>
-        <div class="about-card about-card-2">
-          <div class="about-card-quote">"ਸਭ ਕੋ ਮਿਤ੍ਰ ਹਮ ਆਪਨ ਕੀਨਾ, ਹਮ ਸਭਨਾ ਕੇ ਸਾਜਨ"</div>
-          <div class="about-card-source">— Sri Guru Granth Sahib Ji</div>
+        <div class="quote-card qc-2">
+          <div class="quote-text">"ਸਭ ਕੋ ਮਿਤ੍ਰ ਹਮ ਆਪਨ ਕੀਨਾ, ਹਮ ਸਭਨਾ ਕੇ ਸਾਜਨ"</div>
+          <div class="quote-source">— Sri Guru Granth Sahib Ji</div>
         </div>
       </div>
-      <div class="fade-up fade-up-delay-1">
-        <div class="section-label">Our Mission</div>
+      <div class="fade-up delay-1">
+        <div class="section-eyebrow">Our Mission</div>
         <h2 class="section-title">Preserving &amp; Sharing Sikh Heritage</h2>
-        <div class="about-text" style="margin-top:22px">
-          <p>Vidhia is a <strong>free, open-access digital library</strong> dedicated to sharing resources about Sikhi with anyone seeking to learn, study, or deepen their understanding of this vibrant tradition.</p>
-          <p>We host over 526 PDF texts, scholarly works, and historical documents spanning Gurbani, theology, philosophy, history, and biography — all freely accessible without registration.</p>
-        </div>
-        <div class="about-values">
-          <div class="about-value"><div class="value-icon">🌐</div><div><div class="value-title">Free &amp; Open Access</div><div class="value-desc">All 526 resources available at no cost, to anyone, forever.</div></div></div>
-          <div class="about-value"><div class="value-icon">📚</div><div><div class="value-title">Curated &amp; Organized</div><div class="value-desc">Resources organized by category, author, and topic for easy discovery.</div></div></div>
-          <div class="about-value"><div class="value-icon">🕊️</div><div><div class="value-title">Multiple Perspectives</div><div class="value-desc">Diverse scholarly views represented — shared without endorsement.</div></div></div>
+        <p style="font-size:1rem;color:var(--text-2);line-height:1.75;margin-top:18px">Vidhia is a free, open-access digital library dedicated to sharing resources about Sikhi with anyone seeking to learn, study, or deepen their understanding of this vibrant tradition.</p>
+        <div class="about-values" style="margin-top:24px">
+          <div class="about-val">
+            <div class="val-icon">🌐</div>
+            <div><div class="val-title">Free &amp; Open Access</div><div class="val-desc">All 526 resources available at no cost, to anyone, forever.</div></div>
+          </div>
+          <div class="about-val">
+            <div class="val-icon">📚</div>
+            <div><div class="val-title">Curated &amp; Organized</div><div class="val-desc">Resources organized by category, author, and topic for easy discovery.</div></div>
+          </div>
+          <div class="about-val">
+            <div class="val-icon">🕊️</div>
+            <div><div class="val-title">Multiple Perspectives</div><div class="val-desc">Diverse scholarly views represented — shared without endorsement.</div></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ====== FOOTER ====== -->
+<!-- ── FOOTER ── -->
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
       <div>
-        <div class="footer-logo"><div class="footer-logo-icon">☬</div><span class="footer-logo-text">Vi<span>dhia</span></span></div>
+        <div class="footer-brand-logo">
+          <div class="footer-brand-mark">☬</div>
+          <span class="footer-brand-name">Vi<span>dhia</span></span>
+        </div>
         <p class="footer-tagline">A digital library dedicated to spreading awareness and understanding of Sikhi through freely accessible resources.</p>
       </div>
       <div>
@@ -697,33 +1166,27 @@
   </div>
 </footer>
 
-<!-- ====== FILE BROWSER MODAL ====== -->
+<!-- ── FILE BROWSER MODAL ── -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-header">
-      <div class="modal-title-area">
+      <div class="modal-title-block">
         <div class="modal-folder-title" id="modalFolderTitle">Library</div>
         <div class="modal-breadcrumb" id="modalBreadcrumb"></div>
       </div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-search-wrap">
+    <div class="modal-search-bar">
       <svg class="modal-search-ico" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input type="text" id="modalSearchInput" placeholder="Filter files in this folder…" oninput="filterModal(this.value)" autocomplete="off"/>
     </div>
-    <div class="modal-body"><div class="modal-file-list" id="modalFileList"></div></div>
+    <div class="modal-body"><div id="modalFileList"></div></div>
   </div>
 </div>
 
 <script>
-// ============================================================
-// LIBRARY DATA — scraped from vidhia.com (526 files)
-// ============================================================
 const LIBRARY = {"Bani":{"type":"folder","children":{"Sri Dasam Granth Sahib with Meanings":{"type":"folder","children":{"Volume 1":{"type":"folder","children":{"bhumika.pdf":{"type":"pdf","size":"166.57KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/bhumika.pdf"},"gloryh.pdf":{"type":"pdf","size":"893.44KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/gloryh.pdf"},"gloryp.pdf":{"type":"pdf","size":"65.97KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/gloryp.pdf"},"mukhband.pdf":{"type":"pdf","size":"25.55KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/mukhband.pdf"},"v1_1.pdf":{"type":"pdf","size":"72.74KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/v1_1.pdf"},"v1_2.pdf":{"type":"pdf","size":"148.86KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/v1_2.pdf"},"v1_3.pdf":{"type":"pdf","size":"170.99KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/v1_3.pdf"},"v1_4.pdf":{"type":"pdf","size":"162.16KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/v1_4.pdf"},"v1_5.pdf":{"type":"pdf","size":"129.72KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/v1_5.pdf"},"v1_6.pdf":{"type":"pdf","size":"85.14KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/v1_6.pdf"},"v1_7.pdf":{"type":"pdf","size":"164.12KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/v1_7.pdf"},"v1_8.pdf":{"type":"pdf","size":"174.23KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 1/v1_8.pdf"}}},"Volume 2":{"type":"folder","children":{"v2_1.pdf":{"type":"pdf","size":"202.03KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 2/v2_1.pdf"},"v2_2.pdf":{"type":"pdf","size":"197.56KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 2/v2_2.pdf"},"v2_3.pdf":{"type":"pdf","size":"200.65KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 2/v2_3.pdf"},"v2_4.pdf":{"type":"pdf","size":"190.69KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 2/v2_4.pdf"},"v2_5.pdf":{"type":"pdf","size":"184.04KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 2/v2_5.pdf"},"v2_6.pdf":{"type":"pdf","size":"192.43KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 2/v2_6.pdf"},"v2_7.pdf":{"type":"pdf","size":"191.69KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 2/v2_7.pdf"},"v2_8.pdf":{"type":"pdf","size":"107.96KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 2/v2_8.pdf"}}},"Volume 3":{"type":"folder","children":{"v3_1.pdf":{"type":"pdf","size":"196.36KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 3/v3_1.pdf"},"v3_2.pdf":{"type":"pdf","size":"133.66KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 3/v3_2.pdf"},"v3_3.pdf":{"type":"pdf","size":"194.89KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 3/v3_3.pdf"},"v3_4.pdf":{"type":"pdf","size":"153.15KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 3/v3_4.pdf"},"v3_5.pdf":{"type":"pdf","size":"35.9KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 3/v3_5.pdf"},"v3_6.pdf":{"type":"pdf","size":"50.75KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 3/v3_6.pdf"},"v3_7.pdf":{"type":"pdf","size":"156.91KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 3/v3_7.pdf"},"v3_8.pdf":{"type":"pdf","size":"146.28KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 3/v3_8.pdf"}}},"Volume 4":{"type":"folder","children":{"v4_1.pdf":{"type":"pdf","size":"304.5KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 4/v4_1.pdf"},"v4_2.pdf":{"type":"pdf","size":"241.65KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 4/v4_2.pdf"},"v4_3.pdf":{"type":"pdf","size":"210.37KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 4/v4_3.pdf"},"v4_4.pdf":{"type":"pdf","size":"275.11KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 4/v4_4.pdf"},"v4_5.pdf":{"type":"pdf","size":"247.18KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 4/v4_5.pdf"},"v4_6.pdf":{"type":"pdf","size":"369.71KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 4/v4_6.pdf"}}},"Volume 5":{"type":"folder","children":{"v5_1.pdf":{"type":"pdf","size":"236.56KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 5/v5_1.pdf"},"v5_2.pdf":{"type":"pdf","size":"172.37KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 5/v5_2.pdf"},"v5_3.pdf":{"type":"pdf","size":"220.52KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 5/v5_3.pdf"},"v5_4.pdf":{"type":"pdf","size":"216.75KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 5/v5_4.pdf"},"v5_5.pdf":{"type":"pdf","size":"233.13KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 5/v5_5.pdf"},"v5_6.pdf":{"type":"pdf","size":"227.4KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 5/v5_6.pdf"},"v5_7.pdf":{"type":"pdf","size":"127.54KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 5/v5_7.pdf"},"v5_8.pdf":{"type":"pdf","size":"54.18KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 5/v5_8.pdf"},"v5_9.pdf":{"type":"pdf","size":"169.58KB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib with Meanings/Volume 5/v5_9.pdf"}}}}},"Sri Guru Granth Sahib Ji Shabadarth (SGPC)":{"type":"folder","children":{"Shabadaarth Sri Guru Granth Sahib Ji - Volume 1 (SGPC).pdf":{"type":"pdf","size":"167.69MB","url":"https://vidhia.com/Bani/Sri Guru Granth Sahib Ji Shabadarth (SGPC)/Shabadaarth Sri Guru Granth Sahib Ji - Volume 1 (SGPC).pdf"},"Shabadaarth Sri Guru Granth Sahib Ji - Volume 2 (SGPC).pdf":{"type":"pdf","size":"195.17MB","url":"https://vidhia.com/Bani/Sri Guru Granth Sahib Ji Shabadarth (SGPC)/Shabadaarth Sri Guru Granth Sahib Ji - Volume 2 (SGPC).pdf"},"Shabadaarth Sri Guru Granth Sahib Ji - Volume 3 (SGPC).pdf":{"type":"pdf","size":"190.4MB","url":"https://vidhia.com/Bani/Sri Guru Granth Sahib Ji Shabadarth (SGPC)/Shabadaarth Sri Guru Granth Sahib Ji - Volume 3 (SGPC).pdf"},"Shabadaarth Sri Guru Granth Sahib Ji - Volume 4 (SGPC).pdf":{"type":"pdf","size":"153.94MB","url":"https://vidhia.com/Bani/Sri Guru Granth Sahib Ji Shabadarth (SGPC)/Shabadaarth Sri Guru Granth Sahib Ji - Volume 4 (SGPC).pdf"}}},"01_Sri_Guru_Granth_Sahib_Ji_Larreedaar.pdf":{"type":"pdf","size":"2.86MB","url":"https://vidhia.com/Bani/01_Sri_Guru_Granth_Sahib_Ji_Larreedaar.pdf"},"Akal Ustat-Punjabi.PDF":{"type":"PDF","size":"13.78MB","url":"https://vidhia.com/Bani/Akal Ustat-Punjabi.PDF"},"Amrit Keertan (Khalsa Brothers).pdf":{"type":"pdf","size":"242.31MB","url":"https://vidhia.com/Bani/Amrit Keertan (Khalsa Brothers).pdf"},"Anand_Sahib_-_Gurmukhi.pdf":{"type":"pdf","size":"49.1KB","url":"https://vidhia.com/Bani/Anand_Sahib_-_Gurmukhi.pdf"},"Asa_Di_Var_-_Gurmukhi.pdf":{"type":"pdf","size":"67.82KB","url":"https://vidhia.com/Bani/Asa_Di_Var_-_Gurmukhi.pdf"},"Asa_di_var_-_Including_Chhants.pdf":{"type":"pdf","size":"90.51KB","url":"https://vidhia.com/Bani/Asa_di_var_-_Including_Chhants.pdf"},"Asa_di_var_-_Including_Chhants_iphone_optimized.pdf":{"type":"pdf","size":"54.01KB","url":"https://vidhia.com/Bani/Asa_di_var_-_Including_Chhants_iphone_optimized.pdf"},"Baareh_Maahaa_-_Gurmukhi.pdf":{"type":"pdf","size":"42.39KB","url":"https://vidhia.com/Bani/Baareh_Maahaa_-_Gurmukhi.pdf"},"Bachitar Natak-Punjabi.pdf":{"type":"pdf","size":"3.93MB","url":"https://vidhia.com/Bani/Bachitar Natak-Punjabi.pdf"},"Chandi_Di_Vaar_Steek_-_Pandit_Narain_Singh_Ji.pdf":{"type":"pdf","size":"10.12MB","url":"https://vidhia.com/Bani/Chandi_Di_Vaar_Steek_-_Pandit_Narain_Singh_Ji.pdf"},"Chaupai_Sahib.pdf":{"type":"pdf","size":"89.48KB","url":"https://vidhia.com/Bani/Chaupai_Sahib.pdf"},"Chritropakhyaan Vol I.pdf":{"type":"pdf","size":"845.82KB","url":"https://vidhia.com/Bani/Chritropakhyaan Vol I.pdf"},"Chritropakhyaan Vol II.pdf":{"type":"pdf","size":"873.85KB","url":"https://vidhia.com/Bani/Chritropakhyaan Vol II.pdf"},"Complete-Sri-Sarbloh-Granth-Sahib-Ji-Steek.pdf":{"type":"pdf","size":"42.3MB","url":"https://vidhia.com/Bani/Complete-Sri-Sarbloh-Granth-Sahib-Ji-Steek.pdf"},"Das_Granthi_(SGPC).pdf":{"type":"pdf","size":"14.87MB","url":"https://vidhia.com/Bani/Das_Granthi_(SGPC).pdf"},"Das_Granthi_Pothi.pdf":{"type":"pdf","size":"1.32MB","url":"https://vidhia.com/Bani/Das_Granthi_Pothi.pdf"},"Dukh_Bhanjani_Sahib.pdf":{"type":"pdf","size":"62.8KB","url":"https://vidhia.com/Bani/Dukh_Bhanjani_Sahib.pdf"},"Fatehnama.pdf":{"type":"pdf","size":"142.64KB","url":"https://vidhia.com/Bani/Fatehnama.pdf"},"Jaap_Sahib_-_Gurmukhi.pdf":{"type":"pdf","size":"65.84KB","url":"https://vidhia.com/Bani/Jaap_Sahib_-_Gurmukhi.pdf"},"Jap_Ji_Sahib_-_Gurmukhi.pdf":{"type":"pdf","size":"59.21KB","url":"https://vidhia.com/Bani/Jap_Ji_Sahib_-_Gurmukhi.pdf"},"Kaam_Baare_Shabad.pdf":{"type":"pdf","size":"42.03KB","url":"https://vidhia.com/Bani/Kaam_Baare_Shabad.pdf"},"Nitnem (SGPC).pdf":{"type":"pdf","size":"33.13MB","url":"https://vidhia.com/Bani/Nitnem (SGPC).pdf"},"Panj Granthi-Punjabi.pdf":{"type":"pdf","size":"8.89MB","url":"https://vidhia.com/Bani/Panj Granthi-Punjabi.pdf"},"Rehiras_Sahib_-_Gurmukhi.pdf":{"type":"pdf","size":"55.01KB","url":"https://vidhia.com/Bani/Rehiras_Sahib_-_Gurmukhi.pdf"},"Rehiras_Sahib_-_Sampuran.pdf":{"type":"pdf","size":"572.33KB","url":"https://vidhia.com/Bani/Rehiras_Sahib_-_Sampuran.pdf"},"Sarbloh_Granth_Sahib_Ji_Sampooran_Steek_Part_1_of_2.pdf":{"type":"pdf","size":"23.13MB","url":"https://vidhia.com/Bani/Sarbloh_Granth_Sahib_Ji_Sampooran_Steek_Part_1_of_2.pdf"},"Shabad_Hazarey_-_Gurmukhi.pdf":{"type":"pdf","size":"39.8KB","url":"https://vidhia.com/Bani/Shabad_Hazarey_-_Gurmukhi.pdf"},"Sohila_Sahib_-_Gurmukhi.pdf":{"type":"pdf","size":"34.22KB","url":"https://vidhia.com/Bani/Sohila_Sahib_-_Gurmukhi.pdf"},"Sohila_Sahib_with_Transliteration.pdf":{"type":"pdf","size":"1.91MB","url":"https://vidhia.com/Bani/Sohila_Sahib_with_Transliteration.pdf"},"Sri Dasam Granth Sahib Teeka Part 1 - Giani Bishan Singh Ji.pdf":{"type":"pdf","size":"6.09MB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib Teeka Part 1 - Giani Bishan Singh Ji.pdf"},"Sri Dasam Granth Sahib Teeka Part 2 - Giani Bishan Singh Ji.pdf":{"type":"pdf","size":"2.14MB","url":"https://vidhia.com/Bani/Sri Dasam Granth Sahib Teeka Part 2 - Giani Bishan Singh Ji.pdf"},"Sukhmana_Sahib_-_Gurmukhi.pdf":{"type":"pdf","size":"57.12KB","url":"https://vidhia.com/Bani/Sukhmana_Sahib_-_Gurmukhi.pdf"},"Sukhmani_Sahib_-_Gurmukhi.pdf":{"type":"pdf","size":"162.11KB","url":"https://vidhia.com/Bani/Sukhmani_Sahib_-_Gurmukhi.pdf"},"Tva_Prasad_Svaye_-_Gurmukhi.pdf":{"type":"pdf","size":"35.2KB","url":"https://vidhia.com/Bani/Tva_Prasad_Svaye_-_Gurmukhi.pdf"},"Ugardanti.pdf":{"type":"pdf","size":"514.44KB","url":"https://vidhia.com/Bani/Ugardanti.pdf"},"Vaaraan_Bhai_Gurdaas_Ji_-_Gurmukhi.pdf":{"type":"pdf","size":"765KB","url":"https://vidhia.com/Bani/Vaaraan_Bhai_Gurdaas_Ji_-_Gurmukhi.pdf"},"Zafarnama.pdf":{"type":"pdf","size":"296.46KB","url":"https://vidhia.com/Bani/Zafarnama.pdf"}}},"Bhai Gurdaas Ji":{"type":"folder","children":{"Bhai-Gurdas-Rachit-Varan-Te-Kabitt-Savaiyye-By-Gurmail-Singh-Punjabi.pdf":{"type":"pdf","size":"17.14MB","url":"https://vidhia.com/Bhai Gurdaas Ji/Bhai-Gurdas-Rachit-Varan-Te-Kabitt-Savaiyye-By-Gurmail-Singh-Punjabi.pdf"},"Bhai_Gurdas_Ji_Kabit_Savaiye_Da_Dharam_Shashtari_Adhiyen_Punjabi_By_Onkar_Singh.pdf":{"type":"pdf","size":"24.04MB","url":"https://vidhia.com/Bhai Gurdaas Ji/Bhai_Gurdas_Ji_Kabit_Savaiye_Da_Dharam_Shashtari_Adhiyen_Punjabi_By_Onkar_Singh.pdf"},"Kabit-Sawayye-Bhai-Gurdas-Punjabi.pdf":{"type":"pdf","size":"107.52MB","url":"https://vidhia.com/Bhai Gurdaas Ji/Kabit-Sawayye-Bhai-Gurdas-Punjabi.pdf"},"Vaaran Bhai Gurdaas Ji - SGPC.pdf":{"type":"pdf","size":"122.86MB","url":"https://vidhia.com/Bhai Gurdaas Ji/Vaaran Bhai Gurdaas Ji - SGPC.pdf"},"Vaaran Bhai Gurdaas Ji Punjabi.pdf":{"type":"pdf","size":"363.71KB","url":"https://vidhia.com/Bhai Gurdaas Ji/Vaaran Bhai Gurdaas Ji Punjabi.pdf"}}},"Bhai Gurdaas Singh Ji":{"type":"folder","children":{"Steek of 41st Vaar Bhai Gurdas Singh Ji - Pandit Narain Singh Ji Giani.pdf":{"type":"pdf","size":"16.23MB","url":"https://vidhia.com/Bhai Gurdaas Singh Ji/Steek of 41st Vaar Bhai Gurdas Singh Ji - Pandit Narain Singh Ji Giani.pdf"}}},"Bhai Joginder Singh Ji Talwara":{"type":"folder","children":{"Batta-De-Sayeve-Steek-Punjabi.pdf":{"type":"pdf","size":"11.94MB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/Batta-De-Sayeve-Steek-Punjabi.pdf"},"Bhai Joginder Singh Talwara - Gurbani Da Saral Viakaran Bodh - Jild 1 (Amritsar, 2004).pdf":{"type":"pdf","size":"92.38MB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/Bhai Joginder Singh Talwara - Gurbani Da Saral Viakaran Bodh - Jild 1 (Amritsar, 2004).pdf"},"Bhai Joginder Singh Talwara - Gurbani Da Saral Viakaran Bodh - Jild 2 (Amritsar, 2004).pdf":{"type":"pdf","size":"77.05MB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/Bhai Joginder Singh Talwara - Gurbani Da Saral Viakaran Bodh - Jild 2 (Amritsar, 2004).pdf"},"Gur-Angad-Diyo-Nidhan-Life-and-Annotated-Hymns-of-Guru-Angad-Dev-Ji-Punjabi.pdf":{"type":"pdf","size":"8.1MB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/Gur-Angad-Diyo-Nidhan-Life-and-Annotated-Hymns-of-Guru-Angad-Dev-Ji-Punjabi.pdf"},"Jap-Ji-Sahib-Saral-Steek-Punjabi.pdf":{"type":"pdf","size":"9.8MB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/Jap-Ji-Sahib-Saral-Steek-Punjabi.pdf"},"Jeevan-Katha-Sri-Guru-Amardas-Ji-Punjabi.pdf":{"type":"pdf","size":"14.44MB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/Jeevan-Katha-Sri-Guru-Amardas-Ji-Punjabi.pdf"},"Nitnem-Saral-Steek-Punjabi.pdf":{"type":"pdf","size":"21.29MB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/Nitnem-Saral-Steek-Punjabi.pdf"},"Salok-Sahaskriti-Te-Gatha-Steek-Punjabi.pdf":{"type":"pdf","size":"11.57MB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/Salok-Sahaskriti-Te-Gatha-Steek-Punjabi.pdf"},"Saral-Kirtan-Parnali.pdf":{"type":"pdf","size":"3MB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/Saral-Kirtan-Parnali.pdf"},"Steek-Ramkali-Ki-Vaar-Ate-Basant-Ki-Vaar-Mehal-Punjabi.pdf":{"type":"pdf","size":"37.57MB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/Steek-Ramkali-Ki-Vaar-Ate-Basant-Ki-Vaar-Mehal-Punjabi.pdf"},"why-kill-a-chicken-english.pdf":{"type":"pdf","size":"593.02KB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/why-kill-a-chicken-english.pdf"},"why-kill-a-chicken-punjabi.pdf":{"type":"pdf","size":"204.18KB","url":"https://vidhia.com/Bhai Joginder Singh Ji Talwara/why-kill-a-chicken-punjabi.pdf"}}},"Bhai Kahan Singh Nabha":{"type":"folder","children":{"Hum_Hindu_Nahin.pdf":{"type":"pdf","size":"17.02MB","url":"https://vidhia.com/Bhai Kahan Singh Nabha/Hum_Hindu_Nahin.pdf"},"Mahan_Kosh.pdf":{"type":"pdf","size":"22.78MB","url":"https://vidhia.com/Bhai Kahan Singh Nabha/Mahan_Kosh.pdf"}}},"Bhai Kulbir Singh Ji":{"type":"folder","children":{"Karma_-_Bhai_Kulbir_Singh_Ji.pdf":{"type":"pdf","size":"47.69KB","url":"https://vidhia.com/Bhai Kulbir Singh Ji/Karma_-_Bhai_Kulbir_Singh_Ji.pdf"}}},"Bhai Nand Lal Ji":{"type":"folder","children":{"Bhai Nand Lal Ji - Ganjnama.pdf":{"type":"pdf","size":"147.03KB","url":"https://vidhia.com/Bhai Nand Lal Ji/Bhai Nand Lal Ji - Ganjnama.pdf"},"Bhai Nand Lal Ji - Kalaam e Goya.pdf":{"type":"pdf","size":"13.48MB","url":"https://vidhia.com/Bhai Nand Lal Ji/Bhai Nand Lal Ji - Kalaam e Goya.pdf"},"Bhai Nand Lal Ji - Kalaam e Goya OCR.pdf":{"type":"pdf","size":"953.07KB","url":"https://vidhia.com/Bhai Nand Lal Ji/Bhai Nand Lal Ji - Kalaam e Goya OCR.pdf"}}},"Bhai Raghbir Singh Ji":{"type":"folder","children":{"Bhai Raghbir Singh's Bandginama.pdf":{"type":"pdf","size":"457.11KB","url":"https://vidhia.com/Bhai Raghbir Singh Ji/Bhai Raghbir Singh's Bandginama.pdf"}}},"Bhai Rama Singh Ji":{"type":"folder","children":{"Bhai_Rama_Singh_Ji_-_In_Search_Of_The_True_Guru_Part_1.pdf":{"type":"pdf","size":"64.77MB","url":"https://vidhia.com/Bhai Rama Singh Ji/Bhai_Rama_Singh_Ji_-_In_Search_Of_The_True_Guru_Part_1.pdf"}}},"Bhai Randheer Singh Ji":{"type":"folder","children":{"Ammrit_kee_hain.pdf":{"type":"pdf","size":"300.21KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Ammrit_kee_hain.pdf"},"Anhad-shabad-dasam-duar.pdf":{"type":"pdf","size":"1.03MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Anhad-shabad-dasam-duar.pdf"},"Autobiography-Bhai-Sahib-Randhir-Singh-Ji.pdf":{"type":"pdf","size":"2.6MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Autobiography-Bhai-Sahib-Randhir-Singh-Ji.pdf"},"Bhai-Sahib-Bhai-Randhir-Singh-Ji.pdf":{"type":"pdf","size":"286.32KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Bhai-Sahib-Bhai-Randhir-Singh-Ji.pdf"},"Bhai_Randheer_Singh_Ji_-_Jail_Chhitian_(punjabi).pdf":{"type":"pdf","size":"972.45KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Bhai_Randheer_Singh_Ji_-_Jail_Chhitian_(punjabi).pdf"},"Bhai_Randheer_Singh_Ji_-_Naam_Simran_(punjabi).pdf":{"type":"pdf","size":"128.84KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Bhai_Randheer_Singh_Ji_-_Naam_Simran_(punjabi).pdf"},"Bhai_Randheer_Singh_Ji_-_Rangley_Sajjan.pdf":{"type":"pdf","size":"430.89KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Bhai_Randheer_Singh_Ji_-_Rangley_Sajjan.pdf"},"Bhai_Randheer_Singh_Ji_-_Sri_Dasam_Granth_Sahib.pdf":{"type":"pdf","size":"142.46KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Bhai_Randheer_Singh_Ji_-_Sri_Dasam_Granth_Sahib.pdf"},"Charan-kamal-ki-mauj.pdf":{"type":"pdf","size":"641.81KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Charan-kamal-ki-mauj.pdf"},"Gurmat-Bibek.pdf":{"type":"pdf","size":"22.42MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Gurmat-Bibek.pdf"},"Is-bowing-to-Guru-Granth-Sahib-Ji-akin-to-idol-worship.pdf":{"type":"pdf","size":"454.28KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Is-bowing-to-Guru-Granth-Sahib-Ji-akin-to-idol-worship.pdf"},"Katha-Kirtan.pdf":{"type":"pdf","size":"24.04MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Katha-Kirtan.pdf"},"Keertan Reets of Bhai Sahib.pdf":{"type":"pdf","size":"3.44MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Keertan Reets of Bhai Sahib.pdf"},"Meaning-of-amrit.pdf":{"type":"pdf","size":"541.13KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Meaning-of-amrit.pdf"},"Rangle-Sajjan.pdf":{"type":"pdf","size":"972.98KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Rangle-Sajjan.pdf"},"Sant-Pad-Nirnay.pdf":{"type":"pdf","size":"7.22MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Sant-Pad-Nirnay.pdf"},"Unditthi-duniya.pdf":{"type":"pdf","size":"1.66MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Unditthi-duniya.pdf"},"Waheguru-Simran.pdf":{"type":"pdf","size":"128.84KB","url":"https://vidhia.com/Bhai Randheer Singh Ji/Waheguru-Simran.pdf"},"aastak-tei-naastak.pdf":{"type":"pdf","size":"11.79MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/aastak-tei-naastak.pdf"},"ek-oumar-kaidee-da-supna.pdf":{"type":"pdf","size":"21.36MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/ek-oumar-kaidee-da-supna.pdf"},"khalsa-jee-da-gurmat-aadarsh.pdf":{"type":"pdf","size":"5.91MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/khalsa-jee-da-gurmat-aadarsh.pdf"},"ko-virla-gurmat-chalai-jeeo.pdf":{"type":"pdf","size":"14.23MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/ko-virla-gurmat-chalai-jeeo.pdf"},"sacheeaa-daareeaa.pdf":{"type":"pdf","size":"13.04MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/sacheeaa-daareeaa.pdf"},"zahara-zahoor-Guru-Gobind-Singh.pdf":{"type":"pdf","size":"4.09MB","url":"https://vidhia.com/Bhai Randheer Singh Ji/zahara-zahoor-Guru-Gobind-Singh.pdf"}}},"Bhai Veer Singh Ji":{"type":"folder","children":{"Santhya Sri Guru Granth Sahib Ji":{"type":"folder","children":{"Santhya Sri Guru Granth Sahib Ji Vol.-1.pdf":{"type":"pdf","size":"24.61MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Santhya Sri Guru Granth Sahib Ji/Santhya Sri Guru Granth Sahib Ji Vol.-1.pdf"},"Santhya Sri Guru Granth Sahib Ji Vol.-2.pdf":{"type":"pdf","size":"28.71MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Santhya Sri Guru Granth Sahib Ji/Santhya Sri Guru Granth Sahib Ji Vol.-2.pdf"},"Santhya Sri Guru Granth Sahib Ji Vol.-3.pdf":{"type":"pdf","size":"26.6MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Santhya Sri Guru Granth Sahib Ji/Santhya Sri Guru Granth Sahib Ji Vol.-3.pdf"},"Santhya Sri Guru Granth Sahib Ji Vol.-4.pdf":{"type":"pdf","size":"27.11MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Santhya Sri Guru Granth Sahib Ji/Santhya Sri Guru Granth Sahib Ji Vol.-4.pdf"},"Santhya Sri Guru Granth Sahib Ji Vol.-5.pdf":{"type":"pdf","size":"24.11MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Santhya Sri Guru Granth Sahib Ji/Santhya Sri Guru Granth Sahib Ji Vol.-5.pdf"},"Santhya Sri Guru Granth Sahib Ji Vol.-6.pdf":{"type":"pdf","size":"25.6MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Santhya Sri Guru Granth Sahib Ji/Santhya Sri Guru Granth Sahib Ji Vol.-6.pdf"},"Santhya Sri Guru Granth Sahib Ji Vol.-7.pdf":{"type":"pdf","size":"27.13MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Santhya Sri Guru Granth Sahib Ji/Santhya Sri Guru Granth Sahib Ji Vol.-7.pdf"}}},"Aarshi Shooh-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.7MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Aarshi Shooh-Bhai Vir Singh Punjabi.pdf"},"Aawaz Aai-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"6.1MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Aawaz Aai-Bhai Vir Singh Punjabi.pdf"},"Adhunik Punjabi Sahit Da Pitam-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"6.5MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Adhunik Punjabi Sahit Da Pitam-Bhai Vir Singh Punjabi.pdf"},"Amar Lekh (Part 1) Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"10.03MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Amar Lekh (Part 1) Bhai Vir Singh Punjabi.pdf"},"Amar Lekh (Part 2)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"25.76MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Amar Lekh (Part 2)-Bhai Vir Singh Punjabi.pdf"},"Amar Lekh (Part 3)Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"12.36MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Amar Lekh (Part 3)Bhai Vir Singh Punjabi.pdf"},"Ban Judh.pdf":{"type":"pdf","size":"2.06MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Ban Judh.pdf"},"Ban Yudh-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.24MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Ban Yudh-Bhai Vir Singh Punjabi.pdf"},"Bhai Budhan Shah-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.21MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Bhai Budhan Shah-Bhai Vir Singh Punjabi.pdf"},"Bhai Jhanda Jio, Bhai Bhumia & Kaljug Di Sakhi-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"4.67MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Bhai Jhanda Jio, Bhai Bhumia & Kaljug Di Sakhi-Bhai Vir Singh Punjabi.pdf"},"Bhai Mardana-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.35MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Bhai Mardana-Bhai Vir Singh Punjabi.pdf"},"Bhai Vir Singh-Harbans Singh-English.pdf":{"type":"pdf","size":"4.9MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Bhai Vir Singh-Harbans Singh-English.pdf"},"Bhai Vir Singh.pdf":{"type":"pdf","size":"4.09MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Bhai Vir Singh.pdf"},"Bhai Vir Singh Ji Di Jeewan Chooh-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"4.45MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Bhai Vir Singh Ji Di Jeewan Chooh-Bhai Vir Singh Punjabi.pdf"},"Bijay Singh-Bhai Vir Singh English.pdf":{"type":"pdf","size":"7.95MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Bijay Singh-Bhai Vir Singh English.pdf"},"Bijay Singh-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"7.58MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Bijay Singh-Bhai Vir Singh Punjabi.pdf"},"Bijliya De Haar-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"5.36MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Bijliya De Haar-Bhai Vir Singh Punjabi.pdf"},"Bir Darshan-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.19MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Bir Darshan-Bhai Vir Singh Punjabi.pdf"},"Cosmic Symphony-Bhai Vir Singh English.pdf":{"type":"pdf","size":"6.71MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Cosmic Symphony-Bhai Vir Singh English.pdf"},"Dasam Gur Gira Survekhan--Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.1MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Dasam Gur Gira Survekhan--Bhai Vir Singh Punjabi.pdf"},"Devi Pujan Pratal-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"3.55MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Devi Pujan Pratal-Bhai Vir Singh Punjabi.pdf"},"Dilgir, Diljor, Dilshad-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.61MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Dilgir, Diljor, Dilshad-Bhai Vir Singh Punjabi.pdf"},"Ganga Sagar Wich Maha Sagar-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"16.23MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Ganga Sagar Wich Maha Sagar-Bhai Vir Singh Punjabi.pdf"},"Ganj Namah Steek-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"3.07MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Ganj Namah Steek-Bhai Vir Singh Punjabi.pdf"},"Gur Balam Sakhian (Guru Gobind Singh Ji)-Bhai Vir Singh English-children.pdf":{"type":"pdf","size":"12.86MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gur Balam Sakhian (Guru Gobind Singh Ji)-Bhai Vir Singh English-children.pdf"},"Gur Balam Sakhian (Guru Nanak Dev Ji)-Bhai Vir Singh English-children.pdf":{"type":"pdf","size":"27.91MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gur Balam Sakhian (Guru Nanak Dev Ji)-Bhai Vir Singh English-children.pdf"},"Gur Balam Sakhian(Guru Nanak Dev Ji)-Bhai Vir Singh Punjabi-children.pdf":{"type":"pdf","size":"8.82MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gur Balam Sakhian(Guru Nanak Dev Ji)-Bhai Vir Singh Punjabi-children.pdf"},"Gur Balam Sakhian Guru Gobind Singh Ji--Bhai Vir Singh Punjabi-children.pdf":{"type":"pdf","size":"10.06MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gur Balam Sakhian Guru Gobind Singh Ji--Bhai Vir Singh Punjabi-children.pdf"},"Gurbani Vyakhya De Anmol Rattan-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"3.16MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gurbani Vyakhya De Anmol Rattan-Bhai Vir Singh Punjabi.pdf"},"Gurmat Nam-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.3MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gurmat Nam-Bhai Vir Singh Punjabi.pdf"},"Gurmat Te Nari-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"5.34MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gurmat Te Nari-Bhai Vir Singh Punjabi.pdf"},"Gurmukh Jeevan-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"29.58MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gurmukh Jeevan-Bhai Vir Singh Punjabi.pdf"},"Gurmukh Sandesh-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.38MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gurmukh Sandesh-Bhai Vir Singh Punjabi.pdf"},"Gurmukh Sikhya-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.2MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gurmukh Sikhya-Bhai Vir Singh Punjabi.pdf"},"Gurpurv Gulzar-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"10.29MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gurpurv Gulzar-Bhai Vir Singh Punjabi.pdf"},"Gursikh Warhi-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"14.43MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Gursikh Warhi-Bhai Vir Singh Punjabi.pdf"},"Guru Granth Sahib and Its Context-J S Neki English.pdf":{"type":"pdf","size":"26.97MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Guru Granth Sahib and Its Context-J S Neki English.pdf"},"Guru Nanak Chamatkar (Part 2)-Bhai Vir Singh English.pdf":{"type":"pdf","size":"23.53MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Guru Nanak Chamatkar (Part 2)-Bhai Vir Singh English.pdf"},"Hamdardi Pattar-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"5.85MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Hamdardi Pattar-Bhai Vir Singh Punjabi.pdf"},"Har Gopal Bhishambar Das-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.21MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Har Gopal Bhishambar Das-Bhai Vir Singh Punjabi.pdf"},"Jaap Sahib Stik-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"7MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Jaap Sahib Stik-Bhai Vir Singh Punjabi.pdf"},"Jang Marholi-Charan Singh Punjabi.pdf":{"type":"pdf","size":"5.5MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Jang Marholi-Charan Singh Punjabi.pdf"},"Jang Nala Jog-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.36MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Jang Nala Jog-Bhai Vir Singh Punjabi.pdf"},"Jap Ji Sahib Stik-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"11.26MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Jap Ji Sahib Stik-Bhai Vir Singh Punjabi.pdf"},"Jeevan Kanni-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.93MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Jeevan Kanni-Bhai Vir Singh Punjabi.pdf"},"Jiveen Parshag Bhai Sai Daas Ji-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.83MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Jiveen Parshag Bhai Sai Daas Ji-Bhai Vir Singh Punjabi.pdf"},"Jiwan Parsang, Sahib Sri Guru Arjun Dev Ji-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"6.33MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Jiwan Parsang, Sahib Sri Guru Arjun Dev Ji-Bhai Vir Singh Punjabi.pdf"},"Kabit Bhai Gurdas (Part 1 & 2)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.71MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Kabit Bhai Gurdas (Part 1 & 2)-Bhai Vir Singh Punjabi.pdf"},"Kalam De Karamat-Balbir Singh Punjabi.pdf":{"type":"pdf","size":"11.72MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Kalam De Karamat-Balbir Singh Punjabi.pdf"},"Kambdi Kalai (Part 1)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"6.47MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Kambdi Kalai (Part 1)-Bhai Vir Singh Punjabi.pdf"},"Kambdi Kalai Part 2-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"9.86MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Kambdi Kalai Part 2-Bhai Vir Singh Punjabi.pdf"},"Khara Sauda-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.91MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Khara Sauda-Bhai Vir Singh Punjabi.pdf"},"Lahar Hulare-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"4.3MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Lahar Hulare-Bhai Vir Singh Punjabi.pdf"},"Lami Nadar-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"13.01MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Lami Nadar-Bhai Vir Singh Punjabi.pdf"},"Lehran De Haar-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"4.56MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Lehran De Haar-Bhai Vir Singh Punjabi.pdf"},"Maha Kaav Rana Surat Singh Samikhiatmak Adhyaan-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"9.8MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Maha Kaav Rana Surat Singh Samikhiatmak Adhyaan-Bhai Vir Singh Punjabi.pdf"},"Matak Hulare-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"3.47MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Matak Hulare-Bhai Vir Singh Punjabi.pdf"},"Mera Bala Pritam and Kishor Kotak-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"3.19MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Mera Bala Pritam and Kishor Kotak-Bhai Vir Singh Punjabi.pdf"},"Mere Saiyan Jeo-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.48MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Mere Saiyan Jeo-Bhai Vir Singh Punjabi.pdf"},"Mohena Sohena-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.44MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Mohena Sohena-Bhai Vir Singh Punjabi.pdf"},"Nanan Parjhai-Punjabi.pdf":{"type":"pdf","size":"1.95MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Nanan Parjhai-Punjabi.pdf"},"Nargas-Bhai Vir Singh English.pdf":{"type":"pdf","size":"2.78MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Nargas-Bhai Vir Singh English.pdf"},"Nasira Ya Nasir Begam-Punjabi.pdf":{"type":"pdf","size":"1.54MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Nasira Ya Nasir Begam-Punjabi.pdf"},"Navin Paneeri (Part 3)-Bhai Vir Singh Children English.pdf":{"type":"pdf","size":"11.47MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Navin Paneeri (Part 3)-Bhai Vir Singh Children English.pdf"},"Navin Paneeri Guru Angad Dev (English)--Bhai Vir Singh.pdf":{"type":"pdf","size":"14.36MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Navin Paneeri Guru Angad Dev (English)--Bhai Vir Singh.pdf"},"Navin Paneeri Guru Angad Dev-Bhai Vir Singh Children Punjabi.pdf":{"type":"pdf","size":"7.26MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Navin Paneeri Guru Angad Dev-Bhai Vir Singh Children Punjabi.pdf"},"Navin Paneeri Guru Gobind Singh Ji (Part 1 English)-Bhai Vir Singh Children.pdf":{"type":"pdf","size":"9.02MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Navin Paneeri Guru Gobind Singh Ji (Part 1 English)-Bhai Vir Singh Children.pdf"},"Navin Paneeri Guru Gobind Singh Ji (Part 1)--Bhai Vir Singh Children Punjabi .pdf":{"type":"pdf","size":"4.79MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Navin Paneeri Guru Gobind Singh Ji (Part 1)--Bhai Vir Singh Children Punjabi .pdf"},"Navin Paneeri Guru Nanak Dev Ji (Part 1 English)-Bhai Vir Singh Children.pdf":{"type":"pdf","size":"9.98MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Navin Paneeri Guru Nanak Dev Ji (Part 1 English)-Bhai Vir Singh Children.pdf"},"Navin Paneeri Guru Nanak Dev Ji (Part 1)-Bhai Vir Singh Children Punjabi.pdf":{"type":"pdf","size":"4.91MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Navin Paneeri Guru Nanak Dev Ji (Part 1)-Bhai Vir Singh Children Punjabi.pdf"},"Navin Paneeri Guru Nanak Dev Ji (Part 2 English)-Bhai Vir Singh Children.pdf":{"type":"pdf","size":"9.96MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Navin Paneeri Guru Nanak Dev Ji (Part 2 English)-Bhai Vir Singh Children.pdf"},"Navin Paneeri Guru Nanak Dev Ji (Part 2)-Bhai Vir Singh children Punjabi.pdf":{"type":"pdf","size":"5.15MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Navin Paneeri Guru Nanak Dev Ji (Part 2)-Bhai Vir Singh children Punjabi.pdf"},"Navin Paneeri Guru Nanak Dev Ji (Part 3)-Bhai Vir Singh Children Punjabi.pdf":{"type":"pdf","size":"4.69MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Navin Paneeri Guru Nanak Dev Ji (Part 3)-Bhai Vir Singh Children Punjabi.pdf"},"Niti Warta-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"17.62MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Niti Warta-Bhai Vir Singh Punjabi.pdf"},"Noor Shah Nistara-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.77MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Noor Shah Nistara-Bhai Vir Singh Punjabi.pdf"},"Pani Wich Patase--Bhai Vir Singh Children Punjabi.pdf":{"type":"pdf","size":"3.06MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Pani Wich Patase--Bhai Vir Singh Children Punjabi.pdf"},"Panj Granthi Stik-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"33.04MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Panj Granthi Stik-Bhai Vir Singh Punjabi.pdf"},"Parthari Hari Jeevan-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"3.94MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Parthari Hari Jeevan-Bhai Vir Singh Punjabi.pdf"},"Prachin Panth Parkash-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"20.37MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Prachin Panth Parkash-Bhai Vir Singh Punjabi.pdf"},"Prasanglian-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.94MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Prasanglian-Bhai Vir Singh Punjabi.pdf"},"Preet Veena and Kant Maheli (Baran Mah)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.06MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Preet Veena and Kant Maheli (Baran Mah)-Bhai Vir Singh Punjabi.pdf"},"Pritam Ji-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"5.2MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Pritam Ji-Bhai Vir Singh Punjabi.pdf"},"Puratan Janam Sakhi Shri Guru Nanak Dev Ji-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.23MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Puratan Janam Sakhi Shri Guru Nanak Dev Ji-Bhai Vir Singh Punjabi.pdf"},"Pyaar Athru.pdf":{"type":"pdf","size":"3.73MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Pyaar Athru.pdf"},"Pyar Parvane-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.19MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Pyar Parvane-Bhai Vir Singh Punjabi.pdf"},"Pyare De Baal Choj-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.48MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Pyare De Baal Choj-Bhai Vir Singh Punjabi.pdf"},"Pyarey Da Pyara-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.85MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Pyarey Da Pyara-Bhai Vir Singh Punjabi.pdf"},"Ragmala Da Swal-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.39MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Ragmala Da Swal-Bhai Vir Singh Punjabi.pdf"},"Rana Bhabor-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.6MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Rana Bhabor-Bhai Vir Singh Punjabi.pdf"},"Rana Surat Singh-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"17.39MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Rana Surat Singh-Bhai Vir Singh Punjabi.pdf"},"Sahitak Kaliya-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"4.8MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sahitak Kaliya-Bhai Vir Singh Punjabi.pdf"},"Sain Mian Mir-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.23MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sain Mian Mir-Bhai Vir Singh Punjabi.pdf"},"Sant Bimla Singh (Part 1)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"18.32MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sant Bimla Singh (Part 1)-Bhai Vir Singh Punjabi.pdf"},"Sant Bimla Singh (Part 2)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"10.33MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sant Bimla Singh (Part 2)-Bhai Vir Singh Punjabi.pdf"},"Sant Gatha (Part 1)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.21MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sant Gatha (Part 1)-Bhai Vir Singh Punjabi.pdf"},"Sant Gatha (Part 2)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"12.3MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sant Gatha (Part 2)-Bhai Vir Singh Punjabi.pdf"},"Sat Aukhian Ratan-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.12MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sat Aukhian Ratan-Bhai Vir Singh Punjabi.pdf"},"Satwant Kaur-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"11.02MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Satwant Kaur-Bhai Vir Singh Punjabi.pdf"},"Satwant Kaur_English-Bhai Vir Singh.pdf":{"type":"pdf","size":"9.34MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Satwant Kaur_English-Bhai Vir Singh.pdf"},"Shudh Saroop-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"7.77MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Shudh Saroop-Bhai Vir Singh Punjabi.pdf"},"Sikhan Di Bhagat Mala-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"6.73MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sikhan Di Bhagat Mala-Bhai Vir Singh Punjabi.pdf"},"Sikka Sandra-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"4.3MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sikka Sandra-Bhai Vir Singh Punjabi.pdf"},"Sohni Maula Di and Sasi Sai Lokan Di-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.84MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sohni Maula Di and Sasi Sai Lokan Di-Bhai Vir Singh Punjabi.pdf"},"Sri  Asht Gur Chamtkar (Part 1 & 2)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"23.35MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri  Asht Gur Chamtkar (Part 1 & 2)-Bhai Vir Singh Punjabi.pdf"},"Sri Asht Guru Chamatkar (Part 3)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"11.13MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Asht Guru Chamatkar (Part 3)-Bhai Vir Singh Punjabi.pdf"},"Sri Darbar Sahib Mhattata-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"2.85MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Darbar Sahib Mhattata-Bhai Vir Singh Punjabi.pdf"},"Sri Guru Gobind Singh Ji De Pavitar Jiwan Vichon Kujh Chamatkar-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"6.38MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Guru Gobind Singh Ji De Pavitar Jiwan Vichon Kujh Chamatkar-Bhai Vir Singh Punjabi.pdf"},"Sri Guru Granth Sahib Ji-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"4.06MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Guru Granth Sahib Ji-Bhai Vir Singh Punjabi.pdf"},"Sri Guru Granth Sahib Ji.pdf":{"type":"pdf","size":"3.61MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Guru Granth Sahib Ji.pdf"},"Sri Guru Nanak Chamatkar (Part 1)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"41.83MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Guru Nanak Chamatkar (Part 1)-Bhai Vir Singh Punjabi.pdf"},"Sri Guru Nanak Chamatkar (Part 1)_English-Bhai Vir Singh.pdf":{"type":"pdf","size":"31.03MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Guru Nanak Chamatkar (Part 1)_English-Bhai Vir Singh.pdf"},"Sri Guru Nanak Chamatkar (Part 2)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"36.28MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Guru Nanak Chamatkar (Part 2)-Bhai Vir Singh Punjabi.pdf"},"Sri Kalgidhar Chamatkar (Part 1)(English).pdf":{"type":"pdf","size":"28.72MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Kalgidhar Chamatkar (Part 1)(English).pdf"},"Sri Kalgidhar Chamatkar (Part 1)-Bhai Vir Singh English.pdf":{"type":"pdf","size":"36.16MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Kalgidhar Chamatkar (Part 1)-Bhai Vir Singh English.pdf"},"Sri Kalgidhar Chamatkar (Part 1).pdf":{"type":"pdf","size":"28.72MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Kalgidhar Chamatkar (Part 1).pdf"},"Sri Kalgidhar Chamtkar (Part 1)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"45.87MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Kalgidhar Chamtkar (Part 1)-Bhai Vir Singh Punjabi.pdf"},"Sri Kalgidhar Chamtkar (Part 1).pdf":{"type":"pdf","size":"39.21MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Kalgidhar Chamtkar (Part 1).pdf"},"Sri Kalgidhar Chamtkar (Part 2)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"48.01MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Kalgidhar Chamtkar (Part 2)-Bhai Vir Singh Punjabi.pdf"},"Sri Kalgidhar Chamtkar (Part 2).pdf":{"type":"pdf","size":"39.74MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sri Kalgidhar Chamtkar (Part 2).pdf"},"Subhag Ji Da Sudhar Hathi Baba Nodh Singh-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"23.17MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Subhag Ji Da Sudhar Hathi Baba Nodh Singh-Bhai Vir Singh Punjabi.pdf"},"Sukhmani Steek-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.19MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sukhmani Steek-Bhai Vir Singh Punjabi.pdf"},"Sultanpur Ton Taiyarian-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"1.74MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sultanpur Ton Taiyarian-Bhai Vir Singh Punjabi.pdf"},"Sundri-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"6.25MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sundri-Bhai Vir Singh Punjabi.pdf"},"Sundri_English-Bhai Vir Singh.pdf":{"type":"pdf","size":"4.49MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Sundri_English-Bhai Vir Singh.pdf"},"Teeka Anek Banian (Part 1)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"23.33MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Teeka Anek Banian (Part 1)-Bhai Vir Singh Punjabi.pdf"},"Teeka Anek Banian (Part 2)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"18.73MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Teeka Anek Banian (Part 2)-Bhai Vir Singh Punjabi.pdf"},"Teeka Anek Banian (Part 3)-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"13.31MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Teeka Anek Banian (Part 3)-Bhai Vir Singh Punjabi.pdf"},"The Sixth River of Punjab-Bhai Vir Singh English.pdf":{"type":"pdf","size":"18.68MB","url":"https://vidhia.com/Bhai Veer Singh Ji/The Sixth River of Punjab-Bhai Vir Singh English.pdf"},"Tika Anek Baniya.pdf":{"type":"pdf","size":"20.56MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Tika Anek Baniya.pdf"},"Vaaran Bhai Gurudas Ji-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"36.56MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Vaaran Bhai Gurudas Ji-Bhai Vir Singh Punjabi.pdf"},"Vir Pratavali (Part 1) Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"6.59MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Vir Pratavali (Part 1) Bhai Vir Singh Punjabi.pdf"},"Vir Suneherre-Bhai Vir Singh Punjabi.pdf":{"type":"pdf","size":"8.36MB","url":"https://vidhia.com/Bhai Veer Singh Ji/Vir Suneherre-Bhai Vir Singh Punjabi.pdf"}}},"Biographical":{"type":"folder","children":{"Sant_Jarnail_Singh_Ji.pdf":{"type":"pdf","size":"347.98KB","url":"https://vidhia.com/Biographical/Sant_Jarnail_Singh_Ji.pdf"}}},"Daljit Singh":{"type":"folder","children":{"Authencity of Kartarpuri.pdf":{"type":"pdf","size":"79.24KB","url":"https://vidhia.com/Daljit Singh/Authencity of Kartarpuri.pdf"},"WHO IS A SIKH - review by Daljit Singh.pdf":{"type":"pdf","size":"52.71KB","url":"https://vidhia.com/Daljit Singh/WHO IS A SIKH - review by Daljit Singh.pdf"}}},"Dr Santokh Singh":{"type":"folder","children":{"Brainwashing_OCR.pdf":{"type":"pdf","size":"790.86KB","url":"https://vidhia.com/Dr Santokh Singh/Brainwashing_OCR.pdf"}}},"Giani Gian Singh":{"type":"folder","children":{"Raj Khalsa Part I.pdf":{"type":"pdf","size":"3.63MB","url":"https://vidhia.com/Giani Gian Singh/Raj Khalsa Part I.pdf"},"Raj Khalsa Part II.pdf":{"type":"pdf","size":"2.82MB","url":"https://vidhia.com/Giani Gian Singh/Raj Khalsa Part II.pdf"},"Shamsher Khalsa Part I.pdf":{"type":"pdf","size":"1.23MB","url":"https://vidhia.com/Giani Gian Singh/Shamsher Khalsa Part I.pdf"},"Shamsher Khalsa Part II.pdf":{"type":"pdf","size":"1.64MB","url":"https://vidhia.com/Giani Gian Singh/Shamsher Khalsa Part II.pdf"},"Twarikh Guru Khalsa (Patshahi 01).pdf":{"type":"pdf","size":"1.88MB","url":"https://vidhia.com/Giani Gian Singh/Twarikh Guru Khalsa (Patshahi 01).pdf"},"Twarikh Guru Khalsa (Patshahi 02).pdf":{"type":"pdf","size":"292.28KB","url":"https://vidhia.com/Giani Gian Singh/Twarikh Guru Khalsa (Patshahi 02).pdf"},"Twarikh Guru Khalsa (Patshahi 03).pdf":{"type":"pdf","size":"216.93KB","url":"https://vidhia.com/Giani Gian Singh/Twarikh Guru Khalsa (Patshahi 03).pdf"},"Twarikh Guru Khalsa (Patshahi 04).pdf":{"type":"pdf","size":"175.29KB","url":"https://vidhia.com/Giani Gian Singh/Twarikh Guru Khalsa (Patshahi 04).pdf"},"Twarikh Guru Khalsa (Patshahi 05).pdf":{"type":"pdf","size":"485.09KB","url":"https://vidhia.com/Giani Gian Singh/Twarikh Guru Khalsa (Patshahi 05).pdf"},"Twarikh Guru Khalsa (Patshahi 06).pdf":{"type":"pdf","size":"1.23MB","url":"https://vidhia.com/Giani Gian Singh/Twarikh Guru Khalsa (Patshahi 06).pdf"},"Twarikh Guru Khalsa (Patshahi 07).pdf":{"type":"pdf","size":"327.17KB","url":"https://vidhia.com/Giani Gian Singh/Twarikh Guru Khalsa (Patshahi 07).pdf"},"Twarikh Guru Khalsa (Patshahi 08).pdf":{"type":"pdf","size":"95.27KB","url":"https://vidhia.com/Giani Gian Singh/Twarikh Guru Khalsa (Patshahi 08).pdf"},"Twarikh Guru Khalsa (Patshahi 09).pdf":{"type":"pdf","size":"699.71KB","url":"https://vidhia.com/Giani Gian Singh/Twarikh Guru Khalsa (Patshahi 09).pdf"},"Twarikh Guru Khalsa (Patshahi 10).pdf":{"type":"pdf","size":"2.76MB","url":"https://vidhia.com/Giani Gian Singh/Twarikh Guru Khalsa (Patshahi 10).pdf"}}},"Giani Harbans Singh":{"type":"folder","children":{"Varaan-Bhai-Gurdasji-Steek-By-Giani-Harbans-Singh.pdf":{"type":"pdf","size":"141.77MB","url":"https://vidhia.com/Giani Harbans Singh/Varaan-Bhai-Gurdasji-Steek-By-Giani-Harbans-Singh.pdf"}}},"Giani Kartar Singh Classwalia":{"type":"folder","children":{"Ajit_Khalsa_Itihas_Khalsa_No_2-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"78.07MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Ajit_Khalsa_Itihas_Khalsa_No_2-_Giani_Kartar_Singh_Classwalia.pdf"},"Akali_Lehar_No_1_Arthat_Sudhar_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"73.42MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Akali_Lehar_No_1_Arthat_Sudhar_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf"},"Baba_Banda_Singh_Bahadur_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"92.66MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Baba_Banda_Singh_Bahadur_-_Giani_Kartar_Singh_Classwalia.pdf"},"Daler_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"53.94MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Daler_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf"},"Gian_Parkash_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"376.09KB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Gian_Parkash_-_Giani_Kartar_Singh_Classwalia.pdf"},"Johar_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"99.83MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Johar_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf"},"Khadgesh_Parkash_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"96.72MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Khadgesh_Parkash_-_Giani_Kartar_Singh_Classwalia.pdf"},"Niranjani_Jot_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"47.55MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Niranjani_Jot_-_Giani_Kartar_Singh_Classwalia.pdf"},"Nirankari_Jot_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"167.19MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Nirankari_Jot_-_Giani_Kartar_Singh_Classwalia.pdf"},"Nirbhai_Yodha_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"168.24MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Nirbhai_Yodha_-_Giani_Kartar_Singh_Classwalia.pdf"},"Raj_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"85.48MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Raj_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf"},"Sarkar_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"132.4MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Sarkar_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf"},"Shri_Arjan_Parkash_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"164.06MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Shri_Arjan_Parkash_-_Giani_Kartar_Singh_Classwalia.pdf"},"Sidak_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"84.44MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Sidak_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf"},"Sri_Guru_Dasmesh_Parkash_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"43.97MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Sri_Guru_Dasmesh_Parkash_-_Giani_Kartar_Singh_Classwalia.pdf"},"Tegh_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf":{"type":"pdf","size":"92.02MB","url":"https://vidhia.com/Giani Kartar Singh Classwalia/Tegh_Khalsa_-_Giani_Kartar_Singh_Classwalia.pdf"}}},"Historical, Political, Philosophical and Informational":{"type":"folder","children":{"Bedtime_Stories_Series":{"type":"folder","children":{"Bedtime_Stories_01_Sri_Guru_Gobind_Singh_Ji_-_Santokh_Singh_Jagdev.pdf":{"type":"pdf","size":"4.96MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Bedtime_Stories_Series/Bedtime_Stories_01_Sri_Guru_Gobind_Singh_Ji_-_Santokh_Singh_Jagdev.pdf"},"Bedtime_Stories_03_Sri_Arjan_Dev_Ji_-_Santokh_Singh_Jagdev.pdf":{"type":"pdf","size":"4.67MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Bedtime_Stories_Series/Bedtime_Stories_03_Sri_Arjan_Dev_Ji_-_Santokh_Singh_Jagdev.pdf"},"Bedtime_Stories_05_Guru_Angad_Dev_Ji_Guru_Amardaas_Ji_Guru_Ramdaas_Ji_-_Santokh_Singh_Jagdev.pdf":{"type":"pdf","size":"4.18MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Bedtime_Stories_Series/Bedtime_Stories_05_Guru_Angad_Dev_Ji_Guru_Amardaas_Ji_Guru_Ramdaas_Ji_-_Santokh_Singh_Jagdev.pdf"},"Bedtime_Stories_06_Guru_Hargobind_Ji_Guru_Har_Rai_Ji_Guru_Har_Krishan_Ji_-_Santokh_Singh_Jagdev.pdf":{"type":"pdf","size":"4.33MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Bedtime_Stories_Series/Bedtime_Stories_06_Guru_Hargobind_Ji_Guru_Har_Rai_Ji_Guru_Har_Krishan_Ji_-_Santokh_Singh_Jagdev.pdf"},"Bedtime_Stories_07_Sikh_Martyrs_-_Santokh_Singh_Jagdev.pdf":{"type":"pdf","size":"4.9MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Bedtime_Stories_Series/Bedtime_Stories_07_Sikh_Martyrs_-_Santokh_Singh_Jagdev.pdf"}}},"Stories_From_Sikh_History_Series":{"type":"folder","children":{"01_Stories_From_Sikh_History_Book_I_Guru_Nanak_Dev_Ji.pdf":{"type":"pdf","size":"3.45MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Stories_From_Sikh_History_Series/01_Stories_From_Sikh_History_Book_I_Guru_Nanak_Dev_Ji.pdf"},"02_Stories_From_Sikh_History_Book_II_Guru_Angad_Dev_Ji_To_Guru_Arjun_Dev_Ji.pdf":{"type":"pdf","size":"3.45MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Stories_From_Sikh_History_Series/02_Stories_From_Sikh_History_Book_II_Guru_Angad_Dev_Ji_To_Guru_Arjun_Dev_Ji.pdf"},"03_Stories_From_Sikh_History_Book_III_Guru_Hargobind_Ji_To_Guru_TegBahadur_Ji.pdf":{"type":"pdf","size":"3.69MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Stories_From_Sikh_History_Series/03_Stories_From_Sikh_History_Book_III_Guru_Hargobind_Ji_To_Guru_TegBahadur_Ji.pdf"},"04_Stories_From_Sikh_History_Book_IV_Guru_Gobind_Singh_Ji.pdf":{"type":"pdf","size":"4.49MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Stories_From_Sikh_History_Series/04_Stories_From_Sikh_History_Book_IV_Guru_Gobind_Singh_Ji.pdf"},"05_Stories_From_Sikh_History_Book_V_Sikh_Martyrs.pdf":{"type":"pdf","size":"5.42MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Stories_From_Sikh_History_Series/05_Stories_From_Sikh_History_Book_V_Sikh_Martyrs.pdf"},"06_Stories_From_Sikh_History_Book_VI_Banda_Singh_Bahadur.pdf":{"type":"pdf","size":"4.25MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Stories_From_Sikh_History_Series/06_Stories_From_Sikh_History_Book_VI_Banda_Singh_Bahadur.pdf"},"07_Stories_From_Sikh_History_Book_VII-Maharaja_Ranjit_Singh_And_Thereafter_Till_1989.pdf":{"type":"pdf","size":"4.93MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Stories_From_Sikh_History_Series/07_Stories_From_Sikh_History_Book_VII-Maharaja_Ranjit_Singh_And_Thereafter_Till_1989.pdf"}}},"A_Message_to_Sikh_Youth.pdf":{"type":"pdf","size":"179.49KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/A_Message_to_Sikh_Youth.pdf"},"A_Short_History_of_The_Sikhs_(English)_-_Teja_Singh_Ganda_Singh.pdf":{"type":"pdf","size":"7.14MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/A_Short_History_of_The_Sikhs_(English)_-_Teja_Singh_Ganda_Singh.pdf"},"An_Introduction_to_Sri_Guru_Granth_Sahib_-_Gurbachan_Singh_Talib_English.pdf":{"type":"pdf","size":"5.25MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/An_Introduction_to_Sri_Guru_Granth_Sahib_-_Gurbachan_Singh_Talib_English.pdf"},"An_open_letter_to_the_president_of_India.pdf":{"type":"pdf","size":"66.32KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/An_open_letter_to_the_president_of_India.pdf"},"Anand_Karaj.pdf":{"type":"pdf","size":"67.46KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Anand_Karaj.pdf"},"Anandpur_Sahib_(English)_-_Harjinder_Singh_Dilgeer.pdf":{"type":"pdf","size":"5.84MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Anandpur_Sahib_(English)_-_Harjinder_Singh_Dilgeer.pdf"},"Anthropology_of_State_Terror.pdf":{"type":"pdf","size":"186.81KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Anthropology_of_State_Terror.pdf"},"Arguments_Against_Meat.pdf":{"type":"pdf","size":"113.04KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Arguments_Against_Meat.pdf"},"Around_Gurdwara_Sri_Dukh_Nivaran_Sahib_-_SGPC.pdf":{"type":"pdf","size":"7.69MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Around_Gurdwara_Sri_Dukh_Nivaran_Sahib_-_SGPC.pdf"},"Baba_Banda_Singh_Bahadur_(Basic_History).pdf":{"type":"pdf","size":"8.59MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Baba_Banda_Singh_Bahadur_(Basic_History).pdf"},"Baba_Nanak_-_Harjeet_Singh_Gill.pdf":{"type":"pdf","size":"500.81KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Baba_Nanak_-_Harjeet_Singh_Gill.pdf"},"Baba_Sheikh_Farid_Ji_(English)_-_Gurbachan_Singh_Talib.pdf":{"type":"pdf","size":"39.39MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Baba_Sheikh_Farid_Ji_(English)_-_Gurbachan_Singh_Talib.pdf"},"Baba_Sheikh_Farid_Ji_(Punjabi)_-_Gurbachan_Singh_Talib.pdf":{"type":"pdf","size":"9.56MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Baba_Sheikh_Farid_Ji_(Punjabi)_-_Gurbachan_Singh_Talib.pdf"},"Banda_Singh_Bahadar_-_Ganda_Singh.pdf":{"type":"pdf","size":"13.07MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Banda_Singh_Bahadar_-_Ganda_Singh.pdf"},"Basking_in_the_Divine_Presence_A_Study_of_Jaap_Sahib_-_Jaswant_Singh_Neki.pdf":{"type":"pdf","size":"3.14MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Basking_in_the_Divine_Presence_A_Study_of_Jaap_Sahib_-_Jaswant_Singh_Neki.pdf"},"Bhai_Trilochan_Singh_Ji_-_Sikhism_and_Tantric_Yoga.pdf":{"type":"pdf","size":"8.43MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Bhai_Trilochan_Singh_Ji_-_Sikhism_and_Tantric_Yoga.pdf"},"Bhai_Vir_Singh_-_Harbans_Singh.pdf":{"type":"pdf","size":"8.34MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Bhai_Vir_Singh_-_Harbans_Singh.pdf"},"Bibek.pdf":{"type":"pdf","size":"64.46KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Bibek.pdf"},"Brainwashing_Washing_off_Society's_Superficial_Values_2nd_Edition.pdf":{"type":"pdf","size":"4.97MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Brainwashing_Washing_off_Society's_Superficial_Values_2nd_Edition.pdf"},"Darshan_Singh_Rudel_-_Sikh_Convert.pdf":{"type":"pdf","size":"3.8MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Darshan_Singh_Rudel_-_Sikh_Convert.pdf"},"Dasam_Granth_An_Introductory_Study_-_Sukhbir_Singh_Kapoor_English.pdf":{"type":"pdf","size":"8.62MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Dasam_Granth_An_Introductory_Study_-_Sukhbir_Singh_Kapoor_English.pdf"},"Dawn_of_Divine_Wisdom_-_Bhai_Ram_Singh.pdf":{"type":"pdf","size":"383.38KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Dawn_of_Divine_Wisdom_-_Bhai_Ram_Singh.pdf"},"Dictionary_of_Mythological_References_in_Guru_Granth_Sahib_-_Surindar_Singh_Kohli.pdf":{"type":"pdf","size":"32.8MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Dictionary_of_Mythological_References_in_Guru_Granth_Sahib_-_Surindar_Singh_Kohli.pdf"},"Dictionary_of_Sikh_Philosophy_-_Harjinder_Singh_Dligeer.pdf":{"type":"pdf","size":"8.17MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Dictionary_of_Sikh_Philosophy_-_Harjinder_Singh_Dligeer.pdf"},"Divine_Revelation_-_Sarbinder_Singh.pdf":{"type":"pdf","size":"11.11MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Divine_Revelation_-_Sarbinder_Singh.pdf"},"Eminant_Sikh_Women_-_M_K_Gill.pdf":{"type":"pdf","size":"3.04MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Eminant_Sikh_Women_-_M_K_Gill.pdf"},"Encyclopedia_of_Punjabi_Language_and_Culture_01_-_Harjeet_Singh_Gill.pdf":{"type":"pdf","size":"4.27MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Encyclopedia_of_Punjabi_Language_and_Culture_01_-_Harjeet_Singh_Gill.pdf"},"Encyclopedia_of_Punjabi_Language_and_Culture_02_-_Harjeet_Singh_Gill.pdf":{"type":"pdf","size":"4MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Encyclopedia_of_Punjabi_Language_and_Culture_02_-_Harjeet_Singh_Gill.pdf"},"Experiences_of_Desertion_-_Prabhsharandeep_Singh.pdf":{"type":"pdf","size":"388.05KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Experiences_of_Desertion_-_Prabhsharandeep_Singh.pdf"},"Eye_witnesses_describe_army_action.pdf":{"type":"pdf","size":"2.74MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Eye_witnesses_describe_army_action.pdf"},"General_Hari_Singh_Nalwa_-_Autar_Singh_Sandhu.pdf":{"type":"pdf","size":"11MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/General_Hari_Singh_Nalwa_-_Autar_Singh_Sandhu.pdf"},"Gurbachan_Singh_Talib_-_Guru_Gobind_Singh's_Impact_on_Indian_Society.pdf":{"type":"pdf","size":"570.24KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Gurbachan_Singh_Talib_-_Guru_Gobind_Singh's_Impact_on_Indian_Society.pdf"},"Gurmat_Sangeet_Prakash_Punjabi_-_Tejinder_Singh.pdf":{"type":"pdf","size":"7.46MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Gurmat_Sangeet_Prakash_Punjabi_-_Tejinder_Singh.pdf"},"Guru_Gobind_Singh's_Death_at_Nanded_Examination_of_Succession_Theories_-_Ganda_Singh.pdf":{"type":"pdf","size":"6.59MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Guru_Gobind_Singh's_Death_at_Nanded_Examination_of_Succession_Theories_-_Ganda_Singh.pdf"},"Guru_Nanak_-_Dr_Gopal_Singh.pdf":{"type":"pdf","size":"6.53MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Guru_Nanak_-_Dr_Gopal_Singh.pdf"},"Hari_Singh_Nalwa_-_Gurbachan_Singh_Nayyar.pdf":{"type":"pdf","size":"674.07KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Hari_Singh_Nalwa_-_Gurbachan_Singh_Nayyar.pdf"},"History_of_the_Punjab_-_KS_Narang.pdf":{"type":"pdf","size":"28.58MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/History_of_the_Punjab_-_KS_Narang.pdf"},"How_Europe_Is_Indebted_To_Sikhs_-_Bhupinder_Singh_Holland.pdf":{"type":"pdf","size":"1.47MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/How_Europe_Is_Indebted_To_Sikhs_-_Bhupinder_Singh_Holland.pdf"},"India's_Shame_-_Cynthia_Mahmood.pdf":{"type":"pdf","size":"133.77KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/India's_Shame_-_Cynthia_Mahmood.pdf"},"Jahangirnama_(English)_-_Translated_by_Major_David_Price.pdf":{"type":"pdf","size":"34.85MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Jahangirnama_(English)_-_Translated_by_Major_David_Price.pdf"},"Kurbani_-_1978.pdf":{"type":"pdf","size":"989.33KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Kurbani_-_1978.pdf"},"Lost_in_History_Second_Edition-_Gunisha_Kaur.pdf":{"type":"pdf","size":"7.76MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Lost_in_History_Second_Edition-_Gunisha_Kaur.pdf"},"MSKC_Readings.pdf":{"type":"pdf","size":"3.61MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/MSKC_Readings.pdf"},"Michael_Perry_-_The_Sikh_Army_1799-1849.pdf":{"type":"pdf","size":"13.13MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Michael_Perry_-_The_Sikh_Army_1799-1849.pdf"},"Mutiny_Reports_-_Punjab_Government_Records.pdf":{"type":"pdf","size":"16.51MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Mutiny_Reports_-_Punjab_Government_Records.pdf"},"Nikky-Gurinder_Kaur_Singh_-_Birth_of_the_Khalsa.pdf":{"type":"pdf","size":"674.14KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Nikky-Gurinder_Kaur_Singh_-_Birth_of_the_Khalsa.pdf"},"Pargatyo_Khalsa_Final_-_Onkarpreet.pdf":{"type":"pdf","size":"327.65KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Pargatyo_Khalsa_Final_-_Onkarpreet.pdf"},"Political_Diaries_of_British_Officers_in_Punjab_1847_1849.pdf":{"type":"pdf","size":"57.4MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Political_Diaries_of_British_Officers_in_Punjab_1847_1849.pdf"},"Politics_of_Bloody_Revenge.pdf":{"type":"pdf","size":"3.84MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Politics_of_Bloody_Revenge.pdf"},"Politics_of_Genocide_-_Punjab_1984-1998_-_Inderjit_Singh_Jaijee.pdf":{"type":"pdf","size":"1.56MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Politics_of_Genocide_-_Punjab_1984-1998_-_Inderjit_Singh_Jaijee.pdf"},"Punjab_Freedom_Fighters_-_ML_Ahluwalia_and_Kirpal_Singh.pdf":{"type":"pdf","size":"8.2MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Punjab_Freedom_Fighters_-_ML_Ahluwalia_and_Kirpal_Singh.pdf"},"Punjab_Sovereign_State_-_Gulshan_Lall _Chopra.pdf":{"type":"pdf","size":"54.28MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Punjab_Sovereign_State_-_Gulshan_Lall _Chopra.pdf"},"Ranjit_Singh_-_Narendra_Krishna_Sinha.pdf":{"type":"pdf","size":"18.4MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Ranjit_Singh_-_Narendra_Krishna_Sinha.pdf"},"SINGH_SABHA_AND_OTHER_SOCIO-RELIGIOUS_MOVEMENTS.pdf":{"type":"pdf","size":"1.34MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/SINGH_SABHA_AND_OTHER_SOCIO-RELIGIOUS_MOVEMENTS.pdf"},"Safal_Ardas_Di_Jugti_-_Giani_Varyam_Singh_Ji.pdf":{"type":"pdf","size":"6.71MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Safal_Ardas_Di_Jugti_-_Giani_Varyam_Singh_Ji.pdf"},"Sakhi,_Vyakhya_and_the_Human_Self_-_Prabhsharanbir_Singh.pdf":{"type":"pdf","size":"1.93MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Sakhi,_Vyakhya_and_the_Human_Self_-_Prabhsharanbir_Singh.pdf"},"Sarbloh_and_Vibration.pdf":{"type":"pdf","size":"9.79KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Sarbloh_and_Vibration.pdf"},"Sikh_History_From_Persian_Sources_-_JS_Grewal_Irfan_Habib.pdf":{"type":"pdf","size":"10.91MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Sikh_History_From_Persian_Sources_-_JS_Grewal_Irfan_Habib.pdf"},"Sikh_Politics_and_Religion_-_The_Bhasuar_Singh_Sabha.pdf":{"type":"pdf","size":"8.47MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Sikh_Politics_and_Religion_-_The_Bhasuar_Singh_Sabha.pdf"},"Sikh_Raj.pdf":{"type":"pdf","size":"453.98KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Sikh_Raj.pdf"},"Sikh_and_Non_Sikh_Military_View_of_Bluestar.pdf":{"type":"pdf","size":"551.1KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Sikh_and_Non_Sikh_Military_View_of_Bluestar.pdf"},"Sikhism-A Very Short Introduction - Eleanor Nesbitt.pdf":{"type":"pdf","size":"3.03MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Sikhism-A Very Short Introduction - Eleanor Nesbitt.pdf"},"Sikhism_PPT.pdf":{"type":"pdf","size":"15.22MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Sikhism_PPT.pdf"},"Sir_John_Login_and_Duleep_Singh_-_Lady_Login.pdf":{"type":"pdf","size":"34.25MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Sir_John_Login_and_Duleep_Singh_-_Lady_Login.pdf"},"Some_Technical_Terms_Used_in_Gurbani.pdf":{"type":"pdf","size":"116.38KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Some_Technical_Terms_Used_in_Gurbani.pdf"},"Songs_of_Kabir_-_Translated_by_Rabindernath_Tagore.pdf":{"type":"pdf","size":"142.02KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Songs_of_Kabir_-_Translated_by_Rabindernath_Tagore.pdf"},"Struggle_for_Freedom_of_Religious_Worship_in_Jaito_English.pdf":{"type":"pdf","size":"8.97MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Struggle_for_Freedom_of_Religious_Worship_in_Jaito_English.pdf"},"The_Birds_and_Sri_Guru_Granth_Sahib_-_Sukhbir_Singh_Kapoor.pdf":{"type":"pdf","size":"7.12MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/The_Birds_and_Sri_Guru_Granth_Sahib_-_Sukhbir_Singh_Kapoor.pdf"},"The_Case_For_Keeping_Kesh.pdf":{"type":"pdf","size":"149.15KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/The_Case_For_Keeping_Kesh.pdf"},"The_Court_and_Camp_of_Ranjit_Singh_-_WG_Osborne.pdf":{"type":"pdf","size":"7.36MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/The_Court_and_Camp_of_Ranjit_Singh_-_WG_Osborne.pdf"},"The_Devine_Master_Life_of_Guru_Nanak_Dev_-_Sewaram_Singh.pdf":{"type":"pdf","size":"8.86MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/The_Devine_Master_Life_of_Guru_Nanak_Dev_-_Sewaram_Singh.pdf"},"The_Gallant_Defender_-_AR_Darshi.pdf":{"type":"pdf","size":"35.61MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/The_Gallant_Defender_-_AR_Darshi.pdf"},"The_Ghost_of_Indira_Gandhi.pdf":{"type":"pdf","size":"146.1KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/The_Ghost_of_Indira_Gandhi.pdf"},"The_Sikh_Diaspora.pdf":{"type":"pdf","size":"1.98MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/The_Sikh_Diaspora.pdf"},"The_Sikhs_of_Punjab.pdf":{"type":"pdf","size":"15.9MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/The_Sikhs_of_Punjab.pdf"},"Twenty_Years_of_Impunity_-_2nd_Edition_-_Jaskaran_Kaur.pdf":{"type":"pdf","size":"1.34MB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Twenty_Years_of_Impunity_-_2nd_Edition_-_Jaskaran_Kaur.pdf"},"Water_dispute_in_Punjab.pdf":{"type":"pdf","size":"120.07KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Water_dispute_in_Punjab.pdf"},"Who_are_the_Guilty.pdf":{"type":"pdf","size":"287.38KB","url":"https://vidhia.com/Historical, Political, Philosophical and Informational/Who_are_the_Guilty.pdf"}}},"Hukamnamey":{"type":"folder","children":{"._Akal_Takhat_Hukamnama_Regarding_Missionary_College_Syllabus_May_2016.jpeg":{"type":"jpeg","size":"4KB","url":"https://vidhia.com/Hukamnamey/._Akal_Takhat_Hukamnama_Regarding_Missionary_College_Syllabus_May_2016.jpeg"},"Akal_Takhat_Amrit_Sanchar_Hukamnana_1877.pdf":{"type":"pdf","size":"57.42MB","url":"https://vidhia.com/Hukamnamey/Akal_Takhat_Amrit_Sanchar_Hukamnana_1877.pdf"},"Akal_Takhat_Hukamnama_Against_Banquet_Hall_Weddings_1998.JPG":{"type":"JPG","size":"119.68KB","url":"https://vidhia.com/Hukamnamey/Akal_Takhat_Hukamnama_Against_Banquet_Hall_Weddings_1998.JPG"},"Akal_Takhat_Hukamnama_Regarding_Missionary_College_Syllabus_May_16_2016.jpeg":{"type":"jpeg","size":"57.68KB","url":"https://vidhia.com/Hukamnamey/Akal_Takhat_Hukamnama_Regarding_Missionary_College_Syllabus_May_16_2016.jpeg"}}},"Jagjit Singh":{"type":"folder","children":{"Dynamics_of_Sikh_Revolution.pdf":{"type":"pdf","size":"745.62KB","url":"https://vidhia.com/Jagjit Singh/Dynamics_of_Sikh_Revolution.pdf"},"In_the_carvan_of_revolutions.pdf":{"type":"pdf","size":"532.31KB","url":"https://vidhia.com/Jagjit Singh/In_the_carvan_of_revolutions.pdf"}}},"Max Arthur Macualiffe":{"type":"folder","children":{"Sikh_Religion_Vol_1.pdf":{"type":"pdf","size":"9.76MB","url":"https://vidhia.com/Max Arthur Macualiffe/Sikh_Religion_Vol_1.pdf"},"Sikh_Religion_Vol_2.pdf":{"type":"pdf","size":"27.95MB","url":"https://vidhia.com/Max Arthur Macualiffe/Sikh_Religion_Vol_2.pdf"},"Sikh_Religion_Vol_3.pdf":{"type":"pdf","size":"19.76MB","url":"https://vidhia.com/Max Arthur Macualiffe/Sikh_Religion_Vol_3.pdf"},"Sikh_Religion_Vol_4.pdf":{"type":"pdf","size":"37.58MB","url":"https://vidhia.com/Max Arthur Macualiffe/Sikh_Religion_Vol_4.pdf"},"Sikh_Religion_Vol_5.pdf":{"type":"pdf","size":"41.95MB","url":"https://vidhia.com/Max Arthur Macualiffe/Sikh_Religion_Vol_5.pdf"},"Sikh_Religion_Vol_6.pdf":{"type":"pdf","size":"21.26MB","url":"https://vidhia.com/Max Arthur Macualiffe/Sikh_Religion_Vol_6.pdf"}}},"Pandit Narain Singh":{"type":"folder","children":{"Chandi-Di-Vaar-Steek-Punjabi-By-Giani-Narain-Singh.pdf":{"type":"pdf","size":"3.19MB","url":"https://vidhia.com/Pandit Narain Singh/Chandi-Di-Vaar-Steek-Punjabi-By-Giani-Narain-Singh.pdf"},"Das-Granthi-Steek-Punjabi-By-Pandit-Giani-Narain-Singh.pdf":{"type":"pdf","size":"47.15MB","url":"https://vidhia.com/Pandit Narain Singh/Das-Granthi-Steek-Punjabi-By-Pandit-Giani-Narain-Singh.pdf"},"Shardha-Puran-Punjabi-By-Pandit-Giani-Narain-Singh.pdf":{"type":"pdf","size":"13.13MB","url":"https://vidhia.com/Pandit Narain Singh/Shardha-Puran-Punjabi-By-Pandit-Giani-Narain-Singh.pdf"},"Shri-Bawan-Akhri-Steek-Punjabi-By-Giani-Narain-Singh.pdf":{"type":"pdf","size":"4.96MB","url":"https://vidhia.com/Pandit Narain Singh/Shri-Bawan-Akhri-Steek-Punjabi-By-Giani-Narain-Singh.pdf"}}},"Piara Singh Padam":{"type":"folder","children":{"Dsham-Granth-Darshan-by-Piara-Singh-Padam.pdf":{"type":"pdf","size":"12.23MB","url":"https://vidhia.com/Piara Singh Padam/Dsham-Granth-Darshan-by-Piara-Singh-Padam.pdf"},"Guru-Kian-Sakhian.pdf":{"type":"pdf","size":"14.94MB","url":"https://vidhia.com/Piara Singh Padam/Guru-Kian-Sakhian.pdf"},"Piara_Singh_Padam_-_Rehatnamey.pdf":{"type":"pdf","size":"5.69MB","url":"https://vidhia.com/Piara Singh Padam/Piara_Singh_Padam_-_Rehatnamey.pdf"}}},"Principal Satbir Singh":{"type":"folder","children":{"Aad-Sikh-Te-Aad-Sakhian-Punjabi-By-Principal-Satbir-Singh.pdf":{"type":"pdf","size":"11.08MB","url":"https://vidhia.com/Principal Satbir Singh/Aad-Sikh-Te-Aad-Sakhian-Punjabi-By-Principal-Satbir-Singh.pdf"},"Anaad_Anahat_By_Principal_Satbir_Singh.pdf":{"type":"pdf","size":"14.68MB","url":"https://vidhia.com/Principal Satbir Singh/Anaad_Anahat_By_Principal_Satbir_Singh.pdf"},"Barah-Maha-Tinney-Punjabi-By-Satbir-Singh.pdf":{"type":"pdf","size":"14.9MB","url":"https://vidhia.com/Principal Satbir Singh/Barah-Maha-Tinney-Punjabi-By-Satbir-Singh.pdf"},"Gur-Bhari-Jiwani-Guru-Hargobind-Ji-Punjabi-By-Satbir-Singh.pdf":{"type":"pdf","size":"11.08MB","url":"https://vidhia.com/Principal Satbir Singh/Gur-Bhari-Jiwani-Guru-Hargobind-Ji-Punjabi-By-Satbir-Singh.pdf"},"Iti_Jan_Kari_By_Satbir_Singh.pdf":{"type":"pdf","size":"11.25MB","url":"https://vidhia.com/Principal Satbir Singh/Iti_Jan_Kari_By_Satbir_Singh.pdf"},"Katha-Puratan-Eyun-Suni-Punjabi-By-Satbir-Singh.pdf":{"type":"pdf","size":"22.09MB","url":"https://vidhia.com/Principal Satbir Singh/Katha-Puratan-Eyun-Suni-Punjabi-By-Satbir-Singh.pdf"},"Khalse_Di_Vaasi_by_Satbir_Singh.pdf":{"type":"pdf","size":"26.4MB","url":"https://vidhia.com/Principal Satbir Singh/Khalse_Di_Vaasi_by_Satbir_Singh.pdf"},"Man_Bisram_By_Satbir_Singh.pdf":{"type":"pdf","size":"27.39MB","url":"https://vidhia.com/Principal Satbir Singh/Man_Bisram_By_Satbir_Singh.pdf"},"Mere-Lecture-Punjabi-By-Principal-Satbir-Singh.pdf":{"type":"pdf","size":"33.81MB","url":"https://vidhia.com/Principal Satbir Singh/Mere-Lecture-Punjabi-By-Principal-Satbir-Singh.pdf"},"Nirbhau_Nirvair_By_Satbir_Singh.pdf":{"type":"pdf","size":"11.96MB","url":"https://vidhia.com/Principal Satbir Singh/Nirbhau_Nirvair_By_Satbir_Singh.pdf"},"Puratan-Itihasik-Jiwanian-Punjabi-By-Principal-Satbir-Singh.pdf":{"type":"pdf","size":"23.89MB","url":"https://vidhia.com/Principal Satbir Singh/Puratan-Itihasik-Jiwanian-Punjabi-By-Principal-Satbir-Singh.pdf"},"Rachhia-Rehit-Punjabi-By-Principal-Satbir-Singh.pdf":{"type":"pdf","size":"17.33MB","url":"https://vidhia.com/Principal Satbir Singh/Rachhia-Rehit-Punjabi-By-Principal-Satbir-Singh.pdf"},"Sau_Sawal_(English)_-_Principal_Satbir_Singh.pdf":{"type":"pdf","size":"5MB","url":"https://vidhia.com/Principal Satbir Singh/Sau_Sawal_(English)_-_Principal_Satbir_Singh.pdf"},"Sri-Guru-Hargobind-Sahib-Ji-De-Samay-De-Sikh-Punjabi-By-Satbir-Singh.pdf":{"type":"pdf","size":"12.69MB","url":"https://vidhia.com/Principal Satbir Singh/Sri-Guru-Hargobind-Sahib-Ji-De-Samay-De-Sikh-Punjabi-By-Satbir-Singh.pdf"}}},"Professor Puran Singh":{"type":"folder","children":{"PRAKASINA_A_Buddhist_Princess.pdf":{"type":"pdf","size":"698.43KB","url":"https://vidhia.com/Professor Puran Singh/PRAKASINA_A_Buddhist_Princess.pdf"},"Spirit_of_the_Sikh_Part1.pdf":{"type":"pdf","size":"644.53KB","url":"https://vidhia.com/Professor Puran Singh/Spirit_of_the_Sikh_Part1.pdf"},"Spirit_of_the_Sikh_Part2_V1.pdf":{"type":"pdf","size":"862.45KB","url":"https://vidhia.com/Professor Puran Singh/Spirit_of_the_Sikh_Part2_V1.pdf"},"Spirit_of_the_Sikh_Part2_V2.pdf":{"type":"pdf","size":"1008.68KB","url":"https://vidhia.com/Professor Puran Singh/Spirit_of_the_Sikh_Part2_V2.pdf"},"The_Book_of_Ten_Masters.pdf":{"type":"pdf","size":"592.06KB","url":"https://vidhia.com/Professor Puran Singh/The_Book_of_Ten_Masters.pdf"},"The_Bride_of_the_Sky.pdf":{"type":"pdf","size":"385.74KB","url":"https://vidhia.com/Professor Puran Singh/The_Bride_of_the_Sky.pdf"},"The_Spirit_Born_People_Puran_Singh.pdf":{"type":"pdf","size":"607.67KB","url":"https://vidhia.com/Professor Puran Singh/The_Spirit_Born_People_Puran_Singh.pdf"},"The_Spirit_of_Oriental_Poetry_Puran_Singh.pdf":{"type":"pdf","size":"754.77KB","url":"https://vidhia.com/Professor Puran Singh/The_Spirit_of_Oriental_Poetry_Puran_Singh.pdf"},"The_Temple_Tulips_-_Puran_Singh.pdf":{"type":"pdf","size":"563.21KB","url":"https://vidhia.com/Professor Puran Singh/The_Temple_Tulips_-_Puran_Singh.pdf"}}},"Professor Sahib Singh":{"type":"folder","children":{"Aadh Bir Baare-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"9.16MB","url":"https://vidhia.com/Professor Sahib Singh/Aadh Bir Baare-Prof Sahib Singh-Punjabi.pdf"},"About_The_Compilation_of_Sri_Guru_Granth_Sahib_Ji_(English)_-_Prof_Sahib_Singh.pdf":{"type":"pdf","size":"7.99MB","url":"https://vidhia.com/Professor Sahib Singh/About_The_Compilation_of_Sri_Guru_Granth_Sahib_Ji_(English)_-_Prof_Sahib_Singh.pdf"},"Asa-Di-Vaar-Steek-Prof-Sahib-Singh.pdf":{"type":"pdf","size":"64.06MB","url":"https://vidhia.com/Professor Sahib Singh/Asa-Di-Vaar-Steek-Prof-Sahib-Singh.pdf"},"Babaaniya Kahaniya-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"9.5MB","url":"https://vidhia.com/Professor Sahib Singh/Babaaniya Kahaniya-Prof Sahib Singh-Punjabi.pdf"},"Bani Mehla Nova Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"5.94MB","url":"https://vidhia.com/Professor Sahib Singh/Bani Mehla Nova Steek-Prof Sahib Singh-Punjabi.pdf"},"Baramah Tukkhari Te Maaj-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"7.37MB","url":"https://vidhia.com/Professor Sahib Singh/Baramah Tukkhari Te Maaj-Prof Sahib Singh-Punjabi.pdf"},"Bhagat Bani Steek Part 1-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"5.36MB","url":"https://vidhia.com/Professor Sahib Singh/Bhagat Bani Steek Part 1-Prof Sahib Singh-Punjabi.pdf"},"Bhagat Bani Steek Part 2-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"5.72MB","url":"https://vidhia.com/Professor Sahib Singh/Bhagat Bani Steek Part 2-Prof Sahib Singh-Punjabi.pdf"},"Bhagat Bani Steek Part 3-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"7.53MB","url":"https://vidhia.com/Professor Sahib Singh/Bhagat Bani Steek Part 3-Prof Sahib Singh-Punjabi.pdf"},"Bhagat Bani Steek Part 4-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"11.6MB","url":"https://vidhia.com/Professor Sahib Singh/Bhagat Bani Steek Part 4-Prof Sahib Singh-Punjabi.pdf"},"Bhagat Bani Steek Part 5-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"13.58MB","url":"https://vidhia.com/Professor Sahib Singh/Bhagat Bani Steek Part 5-Prof Sahib Singh-Punjabi.pdf"},"Bhata De Savye Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"9.69MB","url":"https://vidhia.com/Professor Sahib Singh/Bhata De Savye Steek-Prof Sahib Singh-Punjabi.pdf"},"Burai Da Taakra-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"7.93MB","url":"https://vidhia.com/Professor Sahib Singh/Burai Da Taakra-Prof Sahib Singh-Punjabi.pdf"},"Darpan 0001-0100.pdf":{"type":"pdf","size":"1.08MB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 0001-0100.pdf"},"Darpan 0101-0200.pdf":{"type":"pdf","size":"979.89KB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 0101-0200.pdf"},"Darpan 0201-0300.pdf":{"type":"pdf","size":"997.78KB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 0201-0300.pdf"},"Darpan 0301-0400.pdf":{"type":"pdf","size":"1.09MB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 0301-0400.pdf"},"Darpan 0401-0500.pdf":{"type":"pdf","size":"1.28MB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 0401-0500.pdf"},"Darpan 0501-0600.pdf":{"type":"pdf","size":"905.05KB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 0501-0600.pdf"},"Darpan 0601-0700.pdf":{"type":"pdf","size":"985.12KB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 0601-0700.pdf"},"Darpan 0701-0800.pdf":{"type":"pdf","size":"1.16MB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 0701-0800.pdf"},"Darpan 0801-0900.pdf":{"type":"pdf","size":"1.04MB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 0801-0900.pdf"},"Darpan 0901-1000.pdf":{"type":"pdf","size":"1.27MB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 0901-1000.pdf"},"Darpan 1001-1100.pdf":{"type":"pdf","size":"1.03MB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 1001-1100.pdf"},"Darpan 1101-1200.pdf":{"type":"pdf","size":"1.1MB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 1101-1200.pdf"},"Darpan 1201-1300.pdf":{"type":"pdf","size":"1.02MB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 1201-1300.pdf"},"Darpan 1301-1430.pdf":{"type":"pdf","size":"2.06MB","url":"https://vidhia.com/Professor Sahib Singh/Darpan 1301-1430.pdf"},"Desh Videsh De Gurdwarian Da Prabandhaki Dhancha Ate Pracharak Shreni-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"7.73MB","url":"https://vidhia.com/Professor Sahib Singh/Desh Videsh De Gurdwarian Da Prabandhaki Dhancha Ate Pracharak Shreni-Prof Sahib Singh-Punjabi.pdf"},"Dharam Te Sadachar-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"9.04MB","url":"https://vidhia.com/Professor Sahib Singh/Dharam Te Sadachar-Prof Sahib Singh-Punjabi.pdf"},"Gur Itihas Pathshahi 2 to 9-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"17.45MB","url":"https://vidhia.com/Professor Sahib Singh/Gur Itihas Pathshahi 2 to 9-Prof Sahib Singh-Punjabi.pdf"},"Gurbani Te Itihas Bare-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"6.44MB","url":"https://vidhia.com/Professor Sahib Singh/Gurbani Te Itihas Bare-Prof Sahib Singh-Punjabi.pdf"},"Gurbani Vayakaran-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"16.82MB","url":"https://vidhia.com/Professor Sahib Singh/Gurbani Vayakaran-Prof Sahib Singh-Punjabi.pdf"},"GuruGranth Darpan by Prof Sahib Singh.pdf":{"type":"pdf","size":"36.9MB","url":"https://vidhia.com/Professor Sahib Singh/GuruGranth Darpan by Prof Sahib Singh.pdf"},"Jaap Sahib Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"8.38MB","url":"https://vidhia.com/Professor Sahib Singh/Jaap Sahib Steek-Prof Sahib Singh-Punjabi.pdf"},"Japji Sahib Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"6.96MB","url":"https://vidhia.com/Professor Sahib Singh/Japji Sahib Steek-Prof Sahib Singh-Punjabi.pdf"},"Jiwan Britant Sri Guru Gobind Singh Ji-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"9.36MB","url":"https://vidhia.com/Professor Sahib Singh/Jiwan Britant Sri Guru Gobind Singh Ji-Prof Sahib Singh-Punjabi.pdf"},"Meri Jiwan Kahani-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"11.11MB","url":"https://vidhia.com/Professor Sahib Singh/Meri Jiwan Kahani-Prof Sahib Singh-Punjabi.pdf"},"Nitnem Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"10.97MB","url":"https://vidhia.com/Professor Sahib Singh/Nitnem Steek-Prof Sahib Singh-Punjabi.pdf"},"Prof-Sahib-Singh-Sri-Jaap-Sahib-Steek.pdf":{"type":"pdf","size":"2.46MB","url":"https://vidhia.com/Professor Sahib Singh/Prof-Sahib-Singh-Sri-Jaap-Sahib-Steek.pdf"},"Sadachar Lekh-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"7.5MB","url":"https://vidhia.com/Professor Sahib Singh/Sadachar Lekh-Prof Sahib Singh-Punjabi.pdf"},"Sadh Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"2.65MB","url":"https://vidhia.com/Professor Sahib Singh/Sadh Steek-Prof Sahib Singh-Punjabi.pdf"},"Sarbat Da Bhala-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"8.71MB","url":"https://vidhia.com/Professor Sahib Singh/Sarbat Da Bhala-Prof Sahib Singh-Punjabi.pdf"},"Satye Balwand Di War Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"4.82MB","url":"https://vidhia.com/Professor Sahib Singh/Satye Balwand Di War Steek-Prof Sahib Singh-Punjabi.pdf"},"Sidh Gosht-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"5.44MB","url":"https://vidhia.com/Professor Sahib Singh/Sidh Gosht-Prof Sahib Singh-Punjabi.pdf"},"Simran Diya Barkata-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"7.55MB","url":"https://vidhia.com/Professor Sahib Singh/Simran Diya Barkata-Prof Sahib Singh-Punjabi.pdf"},"Slok Guru Angad Sahib Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"5.48MB","url":"https://vidhia.com/Professor Sahib Singh/Slok Guru Angad Sahib Steek-Prof Sahib Singh-Punjabi.pdf"},"Slok Kabir Ji Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"9.31MB","url":"https://vidhia.com/Professor Sahib Singh/Slok Kabir Ji Steek-Prof Sahib Singh-Punjabi.pdf"},"Slok Te Shabad Farid Ji Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"7.27MB","url":"https://vidhia.com/Professor Sahib Singh/Slok Te Shabad Farid Ji Steek-Prof Sahib Singh-Punjabi.pdf"},"Sukhmani Sahib Steek-Prof Sahib Singh-Punjabi.pdf":{"type":"pdf","size":"8.71MB","url":"https://vidhia.com/Professor Sahib Singh/Sukhmani Sahib Steek-Prof Sahib Singh-Punjabi.pdf"},"japji-Prof-Sahib-Singh-Punjabi.pdf":{"type":"pdf","size":"242.05KB","url":"https://vidhia.com/Professor Sahib Singh/japji-Prof-Sahib-Singh-Punjabi.pdf"}}},"Rattan Singh Bhangu":{"type":"folder","children":{"Pracheen_Panth_Parkash.pdf":{"type":"pdf","size":"375.16KB","url":"https://vidhia.com/Rattan Singh Bhangu/Pracheen_Panth_Parkash.pdf"}}},"Rehat Maryada":{"type":"folder","children":{"Gurmat_Rehat_Maryada_-_Damdami_Taksal.pdf":{"type":"pdf","size":"182.1KB","url":"https://vidhia.com/Rehat Maryada/Gurmat_Rehat_Maryada_-_Damdami_Taksal.pdf"},"Rahitnama_Bhai_Chaupa_Singh_Ji_-_With_Commentary_by_Amrit_Pal_Singh_Amrit.pdf":{"type":"pdf","size":"1.87MB","url":"https://vidhia.com/Rehat Maryada/Rahitnama_Bhai_Chaupa_Singh_Ji_-_With_Commentary_by_Amrit_Pal_Singh_Amrit.pdf"},"Rehatnama_-_Prahlad_Singh.pdf":{"type":"pdf","size":"48.66KB","url":"https://vidhia.com/Rehat Maryada/Rehatnama_-_Prahlad_Singh.pdf"},"Rehatnama_Bhai_Desa_Singh_Ji.pdf":{"type":"pdf","size":"304.83KB","url":"https://vidhia.com/Rehat Maryada/Rehatnama_Bhai_Desa_Singh_Ji.pdf"},"SGPC_Sikh_Rehat_Maryada_-_As_Translated_by_Kulraj_Singh.pdf":{"type":"pdf","size":"427.54KB","url":"https://vidhia.com/Rehat Maryada/SGPC_Sikh_Rehat_Maryada_-_As_Translated_by_Kulraj_Singh.pdf"},"SGPC_Sikh_Rehat_Maryada_-_Gurmukhi.pdf":{"type":"pdf","size":"214.94KB","url":"https://vidhia.com/Rehat Maryada/SGPC_Sikh_Rehat_Maryada_-_Gurmukhi.pdf"},"Sikh_Dharam_Maryada_-_Buddha_Dal.pdf":{"type":"pdf","size":"16.43MB","url":"https://vidhia.com/Rehat Maryada/Sikh_Dharam_Maryada_-_Buddha_Dal.pdf"}}},"Sant Harnaam Singh Ji - Rampur Khera":{"type":"folder","children":{"Se_Kinehiya_-_English.pdf":{"type":"pdf","size":"1.16MB","url":"https://vidhia.com/Sant Harnaam Singh Ji - Rampur Khera/Se_Kinehiya_-_English.pdf"},"Se_Kinehiya_-_Gurmukhi.pdf":{"type":"pdf","size":"1.03MB","url":"https://vidhia.com/Sant Harnaam Singh Ji - Rampur Khera/Se_Kinehiya_-_Gurmukhi.pdf"},"Se_Kinehiya_-_Summary_Translation.pdf":{"type":"pdf","size":"228.2KB","url":"https://vidhia.com/Sant Harnaam Singh Ji - Rampur Khera/Se_Kinehiya_-_Summary_Translation.pdf"}}},"Sant_Teja_Singh_Ji_(MA)":{"type":"folder","children":{"Asa_Di_Var_-_Sant_Teja_Singh_Ji_(MA)_English.pdf":{"type":"pdf","size":"7.27MB","url":"https://vidhia.com/Sant_Teja_Singh_Ji_(MA)/Asa_Di_Var_-_Sant_Teja_Singh_Ji_(MA)_English.pdf"},"High_Roads_of_Sikh_History_Vol_III_-_Sant_Teja_Singh_Ji.pdf":{"type":"pdf","size":"10.51MB","url":"https://vidhia.com/Sant_Teja_Singh_Ji_(MA)/High_Roads_of_Sikh_History_Vol_III_-_Sant_Teja_Singh_Ji.pdf"},"High_Roads_of_Sikh_History_Vol_II_-_Sant_Teja_Singh_Ji.pdf":{"type":"pdf","size":"9.3MB","url":"https://vidhia.com/Sant_Teja_Singh_Ji_(MA)/High_Roads_of_Sikh_History_Vol_II_-_Sant_Teja_Singh_Ji.pdf"},"High_Roads_of_Sikh_History_Vol_I_-_Sant_Teja_Singh_Ji.pdf":{"type":"pdf","size":"7.53MB","url":"https://vidhia.com/Sant_Teja_Singh_Ji_(MA)/High_Roads_of_Sikh_History_Vol_I_-_Sant_Teja_Singh_Ji.pdf"},"JapJi_Sahib_English_Translation_-_Sant_Teja_Singh_Ji_(MA).pdf":{"type":"pdf","size":"7.42MB","url":"https://vidhia.com/Sant_Teja_Singh_Ji_(MA)/JapJi_Sahib_English_Translation_-_Sant_Teja_Singh_Ji_(MA).pdf"},"Jiwan_Sant _Attar_Singh_Ji_Vol_1_-_ Sant_Teja_Singh_Ji_(MA).pdf":{"type":"pdf","size":"116.94MB","url":"https://vidhia.com/Sant_Teja_Singh_Ji_(MA)/Jiwan_Sant _Attar_Singh_Ji_Vol_1_-_ Sant_Teja_Singh_Ji_(MA).pdf"},"Jiwan_Sant _Attar_Singh_Ji_Vol_2_-_ Sant_Teja_Singh_Ji_(MA).pdf":{"type":"pdf","size":"99.28MB","url":"https://vidhia.com/Sant_Teja_Singh_Ji_(MA)/Jiwan_Sant _Attar_Singh_Ji_Vol_2_-_ Sant_Teja_Singh_Ji_(MA).pdf"},"Shabdaarth_Sri_Guru_Granth_Sahib_Ji_-Sant_Teja_Singh_Ji_(MA).pdf":{"type":"pdf","size":"19.19MB","url":"https://vidhia.com/Sant_Teja_Singh_Ji_(MA)/Shabdaarth_Sri_Guru_Granth_Sahib_Ji_-Sant_Teja_Singh_Ji_(MA).pdf"},"The_Religion_of_the_Sikh_Gurus_-_Sant_Teja_Singh_Ji_(MA)_English.pdf":{"type":"pdf","size":"4.93MB","url":"https://vidhia.com/Sant_Teja_Singh_Ji_(MA)/The_Religion_of_the_Sikh_Gurus_-_Sant_Teja_Singh_Ji_(MA)_English.pdf"},"The_Sikh_Religion_Sant_Teja_Singh_Ji_(MA)_English.pdf":{"type":"pdf","size":"5.11MB","url":"https://vidhia.com/Sant_Teja_Singh_Ji_(MA)/The_Sikh_Religion_Sant_Teja_Singh_Ji_(MA)_English.pdf"}}},"Sri Guru Granth Sahib Ji Academy":{"type":"folder","children":{"Dasam Granth Pothi 1.pdf":{"type":"pdf","size":"198.18MB","url":"https://vidhia.com/Sri Guru Granth Sahib Ji Academy/Dasam Granth Pothi 1.pdf"},"nitnem pothi new - latest.pdf":{"type":"pdf","size":"65.07MB","url":"https://vidhia.com/Sri Guru Granth Sahib Ji Academy/nitnem pothi new - latest.pdf"}}},"Trilochan Singh":{"type":"folder","children":{"E._Trumpp_and_H._McLeod_as_Scholars_of_Sikh_History.pdf":{"type":"pdf","size":"955.97KB","url":"https://vidhia.com/Trilochan Singh/E._Trumpp_and_H._McLeod_as_Scholars_of_Sikh_History.pdf"}}},"General":{"type":"folder","children":{"Ardas_(English).pdf":{"type":"pdf","size":"3.74MB","url":"https://vidhia.com/Ardas_(English).pdf"},"Bachittar Natak (SGPC).pdf":{"type":"pdf","size":"30.89MB","url":"https://vidhia.com/Bachittar Natak (SGPC).pdf"},"Bhagat_Bani_Steek_1930_Gyani_Bishan_Singh_Ji(1).pdf":{"type":"pdf","size":"126.23MB","url":"https://vidhia.com/Bhagat_Bani_Steek_1930_Gyani_Bishan_Singh_Ji(1).pdf"},"Durga_Prabodh_-_Giani_Ditt_Singh_Ji.pdf":{"type":"pdf","size":"50.22MB","url":"https://vidhia.com/Durga_Prabodh_-_Giani_Ditt_Singh_Ji.pdf"},"Fareedkot_Teeka.pdf":{"type":"pdf","size":"11.69MB","url":"https://vidhia.com/Fareedkot_Teeka.pdf"},"Jeewan_Britant_Guru_Nanak_Dev_Prof_Sahib_Singh_Punjabi.pdf":{"type":"pdf","size":"18.75MB","url":"https://vidhia.com/Jeewan_Britant_Guru_Nanak_Dev_Prof_Sahib_Singh_Punjabi.pdf"},"Mukat_Marag_Granth.pdf":{"type":"pdf","size":"3.54MB","url":"https://vidhia.com/Mukat_Marag_Granth.pdf"},"Planned_Attack_on_Aad_Sri_Guru_Granth_Sahib_-_Academics_or_Blasphemy.pdf":{"type":"pdf","size":"799.78KB","url":"https://vidhia.com/Planned_Attack_on_Aad_Sri_Guru_Granth_Sahib_-_Academics_or_Blasphemy.pdf"},"Sau-Sakheee-English-Translation-Full.pdf":{"type":"pdf","size":"103.88MB","url":"https://vidhia.com/Sau-Sakheee-English-Translation-Full.pdf"},"Shri-Dashm-Granth-Darshan-Hindi.pdf":{"type":"pdf","size":"8.37MB","url":"https://vidhia.com/Shri-Dashm-Granth-Darshan-Hindi.pdf"},"Sikhan-Di-Bhagat-Mala.pdf":{"type":"pdf","size":"13.91MB","url":"https://vidhia.com/Sikhan-Di-Bhagat-Mala.pdf"},"Sikhism_For_Modern_Man_-_Kapur_Singh.pdf":{"type":"pdf","size":"824.39KB","url":"https://vidhia.com/Sikhism_For_Modern_Man_-_Kapur_Singh.pdf"}}}};
 
-// ============================================================
-// CATEGORY METADATA
-// ============================================================
 const CAT_META = {
   "Bani":                   { icon:"📖", color:"rgba(26,37,87,0.1)",    type:"collection", desc:"Sacred scriptures and Gurbani texts" },
   "Bhai Gurdaas Ji":        { icon:"✍️", color:"rgba(124,63,0,0.08)",   type:"scholar",    desc:"Vaaran and Kabitt writings" },
@@ -1065,6 +1528,41 @@ document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
 renderCategories("all");
 renderScriptures();
 renderScholars();
+
+// ── NAVBAR SCROLL ──
+window.addEventListener("scroll",()=>{
+  document.getElementById("navbar").classList.toggle("scrolled",window.scrollY>20);
+});
+
+// ── FADE-UP OBSERVER ──
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("visible"); observer.unobserve(e.target); } });
+},{ threshold:0.1, rootMargin:"0px 0px -40px 0px" });
+document.querySelectorAll(".fade-up").forEach(el=>observer.observe(el));
+
+// ── NUMBER COUNT ANIMATION ──
+function animateCount(el, target) {
+  const duration = 1800;
+  const start = performance.now();
+  const update = now => {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target);
+    if (progress < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+const statObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el = e.target;
+      const target = parseInt(el.dataset.count);
+      if(!isNaN(target)) animateCount(el, target);
+      statObserver.unobserve(el);
+    }
+  });
+},{threshold:0.5});
+document.querySelectorAll("[data-count]").forEach(el=>statObserver.observe(el));
 </script>
 </body>
 </html>
