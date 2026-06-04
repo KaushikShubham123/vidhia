@@ -331,7 +331,26 @@
           grid-template-columns: 1fr;
         }
         .sidebar {
-          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          width: min(320px, 86vw);
+          max-height: none;
+          background: var(--cream);
+          z-index: 210;
+          padding: 18px 14px;
+          box-shadow: 12px 0 40px rgba(10, 36, 86, 0.18);
+          transform: translateX(-100%);
+          transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+          overflow-y: auto;
+          overscroll-behavior: contain;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .sidebar-title {
+          padding-top: 6px;
         }
       }
 
@@ -931,11 +950,429 @@
         padding-top: 18px;
         border-top: 1px solid rgba(255, 255, 255, 0.12);
       }
+
+      /* ── HAMBURGER + SCRIM (mobile drawer chrome) ──
+         All visual changes are gated to ≤920px so the desktop layout
+         (>920px) renders identically to the pre-mobile-pass version. */
+      /* Inverted-default to dodge a source-order cascade conflict:
+         the @media(max-width:920px) rule that sets `display: inline-flex`
+         lives earlier in the file. If we defaulted to `display: none`
+         here (later in source), it would silently win and hide the
+         button on mobile. So we default to visible and HIDE on desktop
+         via a min-width query. */
+      .nav-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        margin-right: 2px;
+        border-radius: 10px;
+        color: var(--brand);
+        flex-shrink: 0;
+        transition: var(--t);
+      }
+      @media (min-width: 921px) {
+        .nav-menu-btn {
+          display: none;
+        }
+      }
+      .nav-menu-btn:hover {
+        background: var(--line-soft);
+      }
+      .nav-menu-btn svg {
+        width: 22px;
+        height: 22px;
+      }
+      .sidebar-scrim {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 36, 86, 0.45);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 200;
+        transition: opacity 240ms ease;
+      }
+      .sidebar-scrim.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      body.no-scroll {
+        overflow: hidden;
+      }
+
+      /* ── RESPONSIVE: ≤768px (tablet portrait) ──
+         Netflix-mobile density: compact chrome, content-first.
+         Most hero copy is trimmed, row-desc hidden, View-all becomes
+         a chevron-only link, tiles shrink so 2.5 fit in a 360px viewport. */
+      @media (max-width: 768px) {
+        body {
+          font-size: 14px;
+        }
+
+        .nav-inner {
+          padding: 0 14px;
+          height: 56px;
+          gap: 10px;
+        }
+        .nav-logo-text {
+          font-size: 20px;
+        }
+        .nav-logo-mark {
+          font-size: 15px;
+        }
+        .nav-search {
+          max-width: none;
+        }
+        .nav-search input {
+          height: 38px;
+          font-size: 13px;
+          padding: 0 12px 0 38px;
+        }
+        .nav-search-ico {
+          left: 14px;
+        }
+        .search-overlay {
+          top: 56px;
+          padding: 6px;
+        }
+
+        .hero {
+          padding: 18px 14px 4px;
+        }
+        .hero-eyebrow {
+          font-size: 10px;
+          padding: 4px 10px;
+          margin-bottom: 10px;
+          letter-spacing: 0.05em;
+        }
+        .hero h1 {
+          font-size: clamp(22px, 6.5vw, 30px);
+          line-height: 1.1;
+          margin-bottom: 8px;
+        }
+        .hero-sub {
+          font-size: 15px;
+          margin-bottom: 4px;
+        }
+        .hero-tag {
+          font-size: 12.5px;
+          line-height: 1.45;
+        }
+        .hero-meta {
+          gap: 8px 14px;
+          margin-top: 12px;
+          padding-top: 10px;
+          font-size: 11px;
+        }
+
+        .filter-bar {
+          padding: 10px 14px 0;
+          gap: 6px;
+        }
+        .pill {
+          padding: 6px 12px;
+          font-size: 12px;
+        }
+
+        .layout {
+          padding: 14px 0 36px;
+        }
+        .row {
+          margin-bottom: 22px;
+        }
+        .row-head {
+          padding: 0 14px;
+          margin-bottom: 8px;
+          gap: 10px;
+          align-items: center;
+        }
+        .row-title {
+          font-size: 16px;
+          gap: 7px;
+          letter-spacing: 0;
+        }
+        .row-title .ico {
+          font-size: 15px;
+        }
+        /* Row description is helpful on desktop where there's whitespace,
+           but on phones it pushes the title to two lines and adds noise.
+           Users learn what each rail contains from the tiles themselves. */
+        .row-desc {
+          display: none;
+        }
+        .row-viewall {
+          font-size: 12px;
+          padding: 4px 8px;
+          white-space: nowrap;
+        }
+        .scroller {
+          padding: 4px 14px 14px;
+          gap: 10px;
+          scroll-padding-left: 14px;
+        }
+        .scroller::-webkit-scrollbar {
+          height: 0;
+        }
+
+        .tile,
+        .tile-cover {
+          width: 124px;
+        }
+        .tile-cover {
+          height: 172px;
+          padding: 14px 11px 12px;
+          border-radius: 9px;
+        }
+        .tile-ico {
+          font-size: 20px;
+        }
+        .tile-name {
+          font-size: 12px;
+          -webkit-line-clamp: 3;
+          line-clamp: 3;
+          line-height: 1.25;
+        }
+        .tile-mono {
+          font-size: 9px;
+          top: 12px;
+          right: 9px;
+        }
+        .tile-badge {
+          font-size: 8px;
+          top: 10px;
+          left: 9px;
+          padding: 2px 6px;
+        }
+        .tile-foot {
+          margin-top: 7px;
+          padding: 0 2px;
+        }
+        .tile-foot-title {
+          font-size: 12px;
+        }
+        .tile-foot-meta {
+          font-size: 10px;
+        }
+
+        .modal-overlay {
+          padding: 0;
+          align-items: flex-end;
+        }
+        .modal {
+          width: 100%;
+          max-height: 92vh;
+          border-radius: 18px 18px 0 0;
+        }
+        .modal-header {
+          padding: 14px 16px 12px;
+        }
+        .modal-folder-title {
+          font-size: 17px;
+          margin-bottom: 4px;
+        }
+        .modal-breadcrumb {
+          font-size: 11.5px;
+        }
+        .modal-close {
+          width: 32px;
+          height: 32px;
+        }
+        .modal-search-wrap {
+          padding: 10px 16px;
+        }
+        .modal-search-ico {
+          left: 30px;
+        }
+        .modal-search-wrap input {
+          padding-left: 36px;
+          height: 38px;
+          font-size: 13px;
+        }
+        .modal-body {
+          padding: 6px 8px 14px;
+          padding-bottom: max(14px, env(safe-area-inset-bottom));
+        }
+        .modal-file-item {
+          padding: 11px 10px;
+          gap: 11px;
+        }
+        .mfi-icon {
+          width: 34px;
+          height: 34px;
+          font-size: 15px;
+        }
+        .mfi-name {
+          font-size: 13px;
+        }
+        .mfi-size {
+          font-size: 11px;
+        }
+
+        footer {
+          padding: 28px 14px 22px;
+          margin-top: 24px;
+        }
+        .footer-inner {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+        .footer-brand {
+          font-size: 20px;
+        }
+        .footer-note {
+          font-size: 12px;
+        }
+        .footer-copy {
+          margin-top: 14px;
+          padding-top: 14px;
+        }
+      }
+
+      /* ── RESPONSIVE: ≤480px (phones) ──
+         Further compression for narrow phones (iPhone SE up to standard).
+         Hide the file-size badge in modal rows (filename earns more space),
+         drop the modal to full-screen, and shrink tiles so ~2.7 fit in view. */
+      @media (max-width: 480px) {
+        .nav-inner {
+          padding: 0 12px;
+          gap: 8px;
+        }
+        .nav-logo-text {
+          font-size: 19px;
+        }
+        .nav-menu-btn {
+          width: 36px;
+          height: 36px;
+        }
+        .nav-menu-btn svg {
+          width: 20px;
+          height: 20px;
+        }
+
+        .hero {
+          padding: 14px 12px 2px;
+        }
+        .hero-eyebrow {
+          margin-bottom: 8px;
+        }
+        .hero h1 {
+          font-size: clamp(20px, 6vw, 26px);
+        }
+        .hero-sub {
+          font-size: 14px;
+        }
+        .hero-tag {
+          font-size: 12px;
+        }
+        .hero-meta {
+          gap: 6px 12px;
+          font-size: 10.5px;
+          margin-top: 10px;
+          padding-top: 8px;
+        }
+
+        .filter-bar {
+          padding: 8px 12px 0;
+        }
+        .pill {
+          padding: 6px 10px;
+          font-size: 11.5px;
+        }
+
+        .layout {
+          padding: 10px 0 32px;
+        }
+        .row {
+          margin-bottom: 18px;
+        }
+        .row-head {
+          padding: 0 12px;
+          margin-bottom: 6px;
+        }
+        .row-title {
+          font-size: 15px;
+        }
+        .scroller {
+          padding: 4px 12px 12px;
+          gap: 9px;
+          scroll-padding-left: 12px;
+        }
+
+        .tile,
+        .tile-cover {
+          width: 112px;
+        }
+        .tile-cover {
+          height: 156px;
+          padding: 12px 10px 11px;
+        }
+        .tile-ico {
+          font-size: 18px;
+        }
+        .tile-name {
+          font-size: 11.5px;
+          -webkit-line-clamp: 3;
+          line-clamp: 3;
+        }
+        .tile-mono {
+          font-size: 8.5px;
+        }
+        .tile-badge {
+          font-size: 8px;
+        }
+        .tile-foot-title {
+          font-size: 11.5px;
+        }
+
+        .modal {
+          max-height: 100vh;
+          height: 100dvh;
+          border-radius: 0;
+        }
+        .modal-search-ico {
+          left: 26px;
+        }
+        .mfi-size {
+          display: none;
+        }
+
+        footer {
+          padding: 24px 12px 20px;
+        }
+      }
+
+      /* Tap-target hygiene on coarse pointers — keeps arrow buttons hidden,
+         softens hover-only affordances that don't translate to touch. */
+      @media (hover: none) and (pointer: coarse) {
+        .arrow-btn {
+          display: none;
+        }
+        .scroller-wrap:hover .arrow-btn {
+          opacity: 0;
+        }
+        .tile:hover {
+          transform: none;
+        }
+      }
     </style>
   </head>
   <body>
     <nav class="navbar" id="navbar">
       <div class="nav-inner">
+        <button
+          class="nav-menu-btn"
+          id="navMenuBtn"
+          aria-label="Browse categories"
+          aria-expanded="false"
+        >
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" />
+          </svg>
+        </button>
         <a href="#" class="nav-logo">
           <span class="nav-logo-text">Vidhia</span>
           <span class="nav-logo-mark gurmukhi">ੴ</span>
@@ -1001,6 +1438,7 @@
       <button class="pill" data-filter="scholar">Scholars</button>
     </div>
 
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
     <div class="layout">
       <aside class="sidebar" id="sidebar"></aside>
       <main class="rows" id="rows"></main>
@@ -4667,6 +5105,46 @@
           .getElementById("navbar")
           .classList.toggle("scrolled", window.scrollY > 8);
       });
+
+      // Mobile drawer: open/close the Browse-by-Category sidebar.
+      // The drawer is only chrome below 920px (CSS-controlled); JS just
+      // toggles classes and is otherwise inert on desktop.
+      (function () {
+        const sidebar = document.getElementById("sidebar");
+        const scrim = document.getElementById("sidebarScrim");
+        const btn = document.getElementById("navMenuBtn");
+        const body = document.body;
+        const openDrawer = () => {
+          sidebar.classList.add("open");
+          scrim.classList.add("open");
+          body.classList.add("no-scroll");
+          btn.setAttribute("aria-expanded", "true");
+        };
+        const closeDrawer = () => {
+          sidebar.classList.remove("open");
+          scrim.classList.remove("open");
+          body.classList.remove("no-scroll");
+          btn.setAttribute("aria-expanded", "false");
+        };
+        btn.addEventListener("click", () => {
+          if (sidebar.classList.contains("open")) closeDrawer();
+          else openDrawer();
+        });
+        scrim.addEventListener("click", closeDrawer);
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && sidebar.classList.contains("open"))
+            closeDrawer();
+        });
+        // Close after a category is picked (sb-item is created by
+        // renderSidebar; delegate so re-renders stay wired).
+        sidebar.addEventListener("click", (e) => {
+          if (e.target.closest(".sb-item")) closeDrawer();
+        });
+        // If the viewport grows back to desktop, reset drawer state.
+        window.addEventListener("resize", () => {
+          if (window.innerWidth > 920) closeDrawer();
+        });
+      })();
 
       // ============================================================
       // INIT
