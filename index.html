@@ -1369,13 +1369,18 @@
           aria-label="Browse categories"
           aria-expanded="false"
         >
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
             <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" />
           </svg>
         </button>
         <a href="#" class="nav-logo">
           <span class="nav-logo-text">Vidhia</span>
-          <span class="nav-logo-mark gurmukhi">ੴ</span>
+          <!-- <span class="nav-logo-mark gurmukhi">ੴ</span> -->
         </a>
         <div class="nav-search">
           <svg
@@ -1399,7 +1404,9 @@
         </div>
         <div class="nav-links">
           <button class="nav-link" data-nav-filter="all">Library</button>
-          <button class="nav-link" data-nav-filter="collection">Collections</button>
+          <button class="nav-link" data-nav-filter="collection">
+            Collections
+          </button>
           <button class="nav-link" data-nav-filter="scholar">Scholars</button>
           <a href="#about" class="nav-link">About</a>
         </div>
@@ -1417,13 +1424,11 @@
 
     <header class="hero">
       <div class="hero-eyebrow">A Sikh Digital Library · Always Free</div>
-      <h1>
-        Explore <span class="accent">Sikh</span> Literature
-      </h1>
+      <h1>Explore <span class="accent">Sikh</span> Literature</h1>
       <div class="hero-sub gurmukhi">ਵਿਦਿਆ ਵਿਚਾਰੀ ਤਾਂ ਪਰਉਪਕਾਰੀ</div>
       <p class="hero-tag">
-        Contemplate and reflect upon knowledge, and you will become a
-        benefactor to others.
+        Contemplate and reflect upon knowledge, and you will become a benefactor
+        to others.
       </p>
       <div class="hero-meta">
         <span><b>526</b> Resources</span>
@@ -1448,16 +1453,14 @@
       <div class="footer-inner">
         <div class="footer-brand">
           <span>Vidhia</span>
-          <span class="mark gurmukhi">ੴ</span>
+          <!-- <span class="mark gurmukhi">ੴ</span> -->
         </div>
         <div class="footer-note">
           Sharing these materials does not imply endorsement of any specific
           author or their work.
         </div>
       </div>
-      <div class="footer-copy">
-        © 2026 Vidhia · 526 resources · Always free
-      </div>
+      <div class="footer-copy">© 2026 Vidhia · 526 resources · Always free</div>
     </footer>
 
     <div
@@ -4900,8 +4903,7 @@
         const words = clean
           .split(/[\s\-—()]+/)
           .filter((w) => w && /[A-Za-zੁਾ-ੌ]/.test(w[0]));
-        if (words.length >= 2)
-          return (words[0][0] + words[1][0]).toUpperCase();
+        if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
         return clean.slice(0, 3).toUpperCase();
       }
 
@@ -4929,7 +4931,7 @@
         const mono = monogram(name);
         const badge = isFolder
           ? `${countFiles(item)} files`
-          : (item.size || "PDF");
+          : item.size || "PDF";
 
         let onclick;
         if (isFolder) {
@@ -5041,8 +5043,7 @@
           `.row[data-cat="${CSS.escape(clean)}"]`,
         );
         if (row) {
-          const top =
-            row.getBoundingClientRect().top + window.scrollY - 84;
+          const top = row.getBoundingClientRect().top + window.scrollY - 84;
           window.scrollTo({ top, behavior: "smooth" });
         }
         document
@@ -5066,8 +5067,7 @@
         entries.sort((a, b) => {
           const ma = CAT_META[a] || { type: "collection" };
           const mb = CAT_META[b] || { type: "collection" };
-          if (ma.type !== mb.type)
-            return ma.type === "collection" ? -1 : 1;
+          if (ma.type !== mb.type) return ma.type === "collection" ? -1 : 1;
           return a.localeCompare(b);
         });
 
